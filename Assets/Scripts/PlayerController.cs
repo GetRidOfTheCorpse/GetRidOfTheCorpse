@@ -146,11 +146,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
     void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("DoorOut"))
+        if (other.CompareTag("DoorOut") && body != null)
         {
             enabled = false;
             rigidbody2D.velocity = Vector2.zero;
             MainCanvas.Instance.FadeOut();
+        } else if (other.CompareTag("DoorIn")) {
+            MainCanvas.Instance.ShowHelpText(HelpText.WrongDirection, 3);
         }
     }
 }

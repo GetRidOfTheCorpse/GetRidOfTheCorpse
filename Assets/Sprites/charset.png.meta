@@ -15,10 +15,36 @@ TextureImporter:
     21300020: right_2
     21300022: right_3
     21300024: down_3
-    21300026: charset_12
-    21300028: charset_13
-    21300030: charset_14
-    21300032: charset_15
+    21300026: corpse_up
+    21300028: corpse_down
+    21300030: corpse_right
+    21300032: corpse_left
+    21300034: down_corpse_1
+    21300036: down_corpse_2
+    21300038: down_corpse_3
+    21300040: up_corpse_1
+    21300042: up_corpse_2
+    21300044: up_corpse_3
+    21300046: left_corpse_1
+    21300048: left_corpse_2
+    21300050: left_corpse_3
+    21300052: right_corpse_1
+    21300054: right_corpse_2
+    21300056: right_corpse_3
+    21300058: guard_down_1
+    21300060: guard_down_2
+    21300062: guard_down_3
+    21300064: guard_up_1
+    21300066: guard_up_2
+    21300068: guard_left_3
+    21300070: guard_left_1
+    21300072: guard_left_2
+    21300074: guard_up_3
+    21300076: guard_right_1
+    21300078: guard_right_2
+    21300080: guard_right_3
+    21300082: arrow
+    21300084: bubble
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -63,7 +89,7 @@ TextureImporter:
     - name: down_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 0
         y: 1664
         width: 128
         height: 256
@@ -73,7 +99,7 @@ TextureImporter:
     - name: down_2
       rect:
         serializedVersion: 2
-        x: 384
+        x: 128
         y: 1664
         width: 128
         height: 256
@@ -83,7 +109,7 @@ TextureImporter:
     - name: up_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 0
         y: 1408
         width: 128
         height: 256
@@ -93,7 +119,7 @@ TextureImporter:
     - name: up_2
       rect:
         serializedVersion: 2
-        x: 384
+        x: 128
         y: 1408
         width: 128
         height: 256
@@ -103,8 +129,8 @@ TextureImporter:
     - name: up_3
       rect:
         serializedVersion: 2
-        x: 512
-        y: 1407
+        x: 256
+        y: 1408
         width: 128
         height: 256
       alignment: 9
@@ -113,7 +139,7 @@ TextureImporter:
     - name: left_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 0
         y: 1152
         width: 128
         height: 256
@@ -123,7 +149,7 @@ TextureImporter:
     - name: left_2
       rect:
         serializedVersion: 2
-        x: 384
+        x: 128
         y: 1152
         width: 128
         height: 256
@@ -133,7 +159,7 @@ TextureImporter:
     - name: left_3
       rect:
         serializedVersion: 2
-        x: 512
+        x: 256
         y: 1152
         width: 128
         height: 256
@@ -143,7 +169,7 @@ TextureImporter:
     - name: right_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 0
         y: 896
         width: 128
         height: 256
@@ -153,7 +179,7 @@ TextureImporter:
     - name: right_2
       rect:
         serializedVersion: 2
-        x: 384
+        x: 128
         y: 896
         width: 128
         height: 256
@@ -163,7 +189,7 @@ TextureImporter:
     - name: right_3
       rect:
         serializedVersion: 2
-        x: 512
+        x: 256
         y: 896
         width: 128
         height: 256
@@ -173,14 +199,14 @@ TextureImporter:
     - name: down_3
       rect:
         serializedVersion: 2
-        x: 512
+        x: 256
         y: 1664
         width: 128
         height: 256
       alignment: 9
       pivot: {x: .5, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: charset_12
+    - name: corpse_up
       rect:
         serializedVersion: 2
         x: 256
@@ -190,7 +216,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: .5, y: .75}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: charset_13
+    - name: corpse_down
       rect:
         serializedVersion: 2
         x: 384
@@ -200,7 +226,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: .5, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: charset_14
+    - name: corpse_right
       rect:
         serializedVersion: 2
         x: 256
@@ -210,15 +236,275 @@ TextureImporter:
       alignment: 9
       pivot: {x: .649999976, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: charset_15
+    - name: corpse_left
       rect:
         serializedVersion: 2
         x: 512
-        y: 512
+        y: 511
         width: 256
         height: 128
       alignment: 9
       pivot: {x: .349999994, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: down_corpse_1
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1664
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .75, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: down_corpse_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1664
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .75, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: down_corpse_3
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1664
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .75, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: up_corpse_1
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1408
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .25, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: up_corpse_2
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 1408
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .25, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: up_corpse_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1408
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .25, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: left_corpse_1
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1152
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .25, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: left_corpse_2
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 1152
+        width: 256
+        height: 256
+      alignment: 9
+      pivot: {x: .25, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: left_corpse_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1152
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: right_corpse_1
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 896
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: right_corpse_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 896
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: right_corpse_3
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 896
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_down_1
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1664
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_down_2
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 1664
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_down_3
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1664
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_up_1
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1408
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_up_2
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 1408
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_up_3
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1408
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_left_1
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1152
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_left_2
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 1152
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_left_3
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1152
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_right_1
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 896
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_right_2
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 896
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: guard_right_3
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 896
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: arrow
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 643
+        width: 125
+        height: 124
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: bubble
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 651
+        width: 123
+        height: 106
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

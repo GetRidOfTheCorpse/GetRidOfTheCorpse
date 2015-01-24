@@ -14,7 +14,9 @@ public enum HelpText
     [Description("Press Action to read")]
     ActionToRead,
     [Description("Press Action to close")]
-    ActionToClose
+    ActionToClose,
+    [Description("This is a one way door!")]
+    WrongDirection
 }
 
 public class MainCanvas : MonoBehaviour
