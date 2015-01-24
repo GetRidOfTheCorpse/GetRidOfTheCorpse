@@ -42,3 +42,31 @@ TagManager:
     userID: 0
     uniqueID: 0
     locked: 0
+  - name: Ground
+    userID: 1
+    uniqueID: 67378473
+    locked: 0
+  - name: Walls
+    userID: 2
+    uniqueID: 1390344533
+    locked: 0
+  - name: Obstacle
+    userID: 3
+    uniqueID: 1359626889
+    locked: 0
+  - name: Doors
+    userID: 4
+    uniqueID: 199559527
+    locked: 0
+  - name: Decorations
+    userID: 5
+    uniqueID: 383871361
+    locked: 0
+  - name: Person
+    userID: 6
+    uniqueID: 2421679827
+    locked: 0
+  - name: overlays
+    userID: 7
+    uniqueID: 621358185
+    locked: 0

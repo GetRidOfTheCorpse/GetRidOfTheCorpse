@@ -2711,6 +2711,8 @@ namespace X_UniTMX
             {
                 if (obj.HasProperty(Property_SortingLayerName))
                     gameObject.renderer.sortingLayerName = obj.GetPropertyAsString(Property_SortingLayerName);
+                else
+                    gameObject.renderer.sortingLayerName = obj.ParentObjectLayer.Name;
 
                 if (obj.HasProperty(Property_SortingOrder))
                     gameObject.renderer.sortingOrder = obj.GetPropertyAsInt(Property_SortingOrder);
