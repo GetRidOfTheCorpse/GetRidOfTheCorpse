@@ -12,7 +12,7 @@ GameObject:
   - 50: {fileID: 5027958}
   - 114: {fileID: 11427958}
   - 58: {fileID: 5827958}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4803bfb252f986b40806309c71aad07b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pickupdist: 1
 --- !u!212 &21227958
 SpriteRenderer:
   m_ObjectHideFlags: 1
