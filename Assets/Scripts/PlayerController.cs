@@ -63,16 +63,16 @@ public class PlayerController : MonoBehaviour {
 				float magn = (other.position - myTransform.position).magnitude;
 				if(magn < pickupdist){
 					body = obj[i];
-					DistanceJoint2D joint = gameObject.AddComponent<DistanceJoint2D>();
-					joint.distance = magn;
-					joint.connectedBody = (Rigidbody2D)body.GetComponent("Rigidbody2D");
-					joint.maxDistanceOnly = true;
+					//DistanceJoint2D joint = gameObject.AddComponent<DistanceJoint2D>();
+					//joint.distance = magn;
+					//joint.connectedBody = (Rigidbody2D)body.GetComponent("Rigidbody2D");
+					//joint.maxDistanceOnly = true;
 					break;
 				}
 			}
 		}
 		else if(Input.GetKeyUp("space") && body != null){
-			GameObject.Destroy(gameObject.GetComponent("DistanceJoint2D"));
+			//GameObject.Destroy(gameObject.GetComponent("DistanceJoint2D"));
 			body = null;
 		}
 
@@ -81,8 +81,36 @@ public class PlayerController : MonoBehaviour {
 		movDirection *= 5;
 
 		if(body != null){
+			animator.speed = 0.2f;
 			Transform other = (Transform) body.GetComponent("Transform");
-			other.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(other.position.y - myTransform.position.y, other.position.x - myTransform.position.x) * Mathf.Rad2Deg);
+			Animator otherAnim = (Animator) body.GetComponent("Animator");
+
+			
+			int charAngle = animator.GetInteger("Direction");
+			Vector2 diff = new Vector2();
+			switch(charAngle){
+				case 0:
+					diff = new Vector2(0, 1); 
+					otherAnim.SetInteger("Direction", 2);
+					break;
+				case 1:
+					diff = new Vector2(1, 0); 
+					otherAnim.SetInteger("Direction", 3);
+					break;
+				case 2:
+					diff = new Vector2(0, -1); 
+					otherAnim.SetInteger("Direction", 0);
+					break;
+				case 3:
+					diff = new Vector2(-1, 0); 
+					otherAnim.SetInteger("Direction", 1);
+					break;
+			}
+			other.position = myTransform.position + (Vector3)(diff * 0.5f);
+			//other.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(other.position.y - myTransform.position.y, other.position.x - myTransform.position.x) * Mathf.Rad2Deg);
+		}
+		else{
+			animator.speed = 0.5f;
 		}
 
 		rigidBody.velocity = movDirection;
