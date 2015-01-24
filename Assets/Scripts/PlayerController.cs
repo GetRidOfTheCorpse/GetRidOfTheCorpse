@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class PlayerController : MonoBehaviour {
-	public GameObject body;
+	private GameObject body;
 	private Transform myTransform;
 	private Transform bodyTransform;
 	private float rot;
@@ -20,16 +20,14 @@ public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		GameObject[] objs = GameObject.FindGameObjectsWithTag("Body");
+		body = objs[0];	
 		myTransform = ((Transform)GetComponent("Transform"));
 		bodyTransform = ((Transform)body.GetComponent("Transform"));
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(body == null){
-			GameObject[] objs = GameObject.FindGameObjectsWithTag("Body");
-			body = objs[0];
-		}
 		Rigidbody2D rigidBody = (Rigidbody2D)GetComponent("Rigidbody2D");
 		
 
