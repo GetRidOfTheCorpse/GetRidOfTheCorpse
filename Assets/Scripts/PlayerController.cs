@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
 	private Transform myTransform;
 	private float rot;
 	public float pickupdist = 0.5f;
+	private Animator animator;
 
 	private Vector2 movDirection;
 
@@ -15,6 +16,7 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myTransform = (Transform) GetComponent("Transform");
+		animator = (Animator) GetComponent("Animator");
 	}
 	
 	// Update is called once per frame
@@ -23,25 +25,35 @@ public class PlayerController : MonoBehaviour {
 		
 		if(Input.GetKey("up")){
 			ym = 1;
+			xm = 0;
+			animator.SetInteger("Direction", 2);
+			animator.SetBool("Moving", true);
 		}
 		else if(Input.GetKey("down")){
 			ym = -1;
+			xm = 0;
+			animator.SetInteger("Direction", 0);
+			animator.SetBool("Moving", true);
 		}
 		else{
 			ym = 0;
+			if(Input.GetKey("left")){
+				xm = -1;
+				animator.SetInteger("Direction", 1);
+				animator.SetBool("Moving", true);
+			}
+			else if(Input.GetKey("right")){
+				xm = +1;
+				animator.SetInteger("Direction", 3);
+				animator.SetBool("Moving", true);
+			}
+			else{
+				xm = 0;
+				animator.SetBool("Moving", false);
+			}
 		}
 
-		if(Input.GetKey("left")){
-			xm = -1;
-		}
-		else if(Input.GetKey("right")){
-			xm = +1;
-		}
-		else{
-			xm = 0;
-		}
-
-		if(xm != 0 || ym != 0) rot = Mathf.Atan2(ym, xm)*Mathf.Rad2Deg;
+		//if(xm != 0 || ym != 0) rot = Mathf.Atan2(ym, xm)*Mathf.Rad2Deg;
 
 
 		if(Input.GetKeyDown("space") && body == null){
@@ -65,7 +77,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		movDirection = new Vector2(xm, ym);
-		myTransform.rotation = Quaternion.Euler(0, 0, rot);
+		//myTransform.rotation = Quaternion.Euler(0, 0, rot);
 		movDirection *= 5;
 
 		if(body != null){
