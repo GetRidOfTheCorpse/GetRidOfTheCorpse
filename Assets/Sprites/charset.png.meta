@@ -15,6 +15,10 @@ TextureImporter:
     21300020: right_2
     21300022: right_3
     21300024: down_3
+    21300026: charset_12
+    21300028: charset_13
+    21300030: charset_14
+    21300032: charset_15
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -175,6 +179,46 @@ TextureImporter:
         height: 256
       alignment: 9
       pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: charset_12
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 640
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: charset_13
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 640
+        width: 128
+        height: 256
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: charset_14
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 512
+        width: 256
+        height: 128
+      alignment: 9
+      pivot: {x: .649999976, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: charset_15
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 256
+        height: 128
+      alignment: 9
+      pivot: {x: .349999994, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
