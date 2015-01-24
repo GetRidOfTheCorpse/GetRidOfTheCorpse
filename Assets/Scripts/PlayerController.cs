@@ -20,60 +20,89 @@ public class PlayerController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		Rigidbody2D rigidBody = (Rigidbody2D)GetComponent("Rigidbody2D");
+	void Update()
+    {
+        Rigidbody2D rigidBody = (Rigidbody2D)GetComponent("Rigidbody2D");
 		
-		if(Input.GetKey("up")){
-			ym = 1;
-			xm = 0;
-			animator.SetInteger("Direction", 2);
-			animator.SetBool("Moving", true);
-		}
-		else if(Input.GetKey("down")){
-			ym = -1;
-			xm = 0;
-			animator.SetInteger("Direction", 0);
-			animator.SetBool("Moving", true);
-		}
-		else{
-			ym = 0;
-			if(Input.GetKey("left")){
-				xm = -1;
-				animator.SetInteger("Direction", 1);
-				animator.SetBool("Moving", true);
-			}
-			else if(Input.GetKey("right")){
-				xm = +1;
-				animator.SetInteger("Direction", 3);
-				animator.SetBool("Moving", true);
-			}
-			else{
-				xm = 0;
-				animator.SetBool("Moving", false);
-			}
-		}
+        if (Input.GetKey("up"))
+        {
+            ym = 1;
+            xm = 0;
+            animator.SetInteger("Direction", 2);
+            animator.SetBool("Moving", true);
+        }
+        else if (Input.GetKey("down"))
+        {
+            ym = -1;
+            xm = 0;
+            animator.SetInteger("Direction", 0);
+            animator.SetBool("Moving", true);
+        }
+        else
+        {
+            ym = 0;
+            if (Input.GetKey("left"))
+            {
+                xm = -1;
+                animator.SetInteger("Direction", 1);
+                animator.SetBool("Moving", true);
+            }
+            else if (Input.GetKey("right"))
+            {
+                xm = +1;
+                animator.SetInteger("Direction", 3);
+                animator.SetBool("Moving", true);
+            }
+            else
+            {
+                xm = 0;
+                animator.SetBool("Moving", false);
+            }
+        }
 
-		//if(xm != 0 || ym != 0) rot = Mathf.Atan2(ym, xm)*Mathf.Rad2Deg;
+        //if(xm != 0 || ym != 0) rot = Mathf.Atan2(ym, xm)*Mathf.Rad2Deg;
 
 
-		if(Input.GetKeyDown("space") && body == null){
-			GameObject[] obj = GameObject.FindGameObjectsWithTag("Body");
-			for(int i = 0; i < obj.Length; i++){
-				Transform other = ((Transform) obj[i].GetComponent("Transform"));
-				float magn = (other.position - myTransform.position).magnitude;
-				if(magn < pickupdist){
-					body = obj[i];
-					//DistanceJoint2D joint = gameObject.AddComponent<DistanceJoint2D>();
-					//joint.distance = magn;
-					//joint.connectedBody = (Rigidbody2D)body.GetComponent("Rigidbody2D");
-					//joint.maxDistanceOnly = true;
-					break;
-				}
-			}
-		}
-		else if(Input.GetKeyUp("space") && body != null){
-			//GameObject.Destroy(gameObject.GetComponent("DistanceJoint2D"));
-			body = null;
+        if (body == null)
+        {
+            GameObject[] obj = GameObject.FindGameObjectsWithTag("Body");
+            bool bodyFound = false;
+            for (int i = 0; i < obj.Length; i++)
+            {
+                Transform other = ((Transform)obj[i].GetComponent("Transform"));
+                float magn = (other.position - myTransform.position).magnitude;
+                if (magn < pickupdist)
+                {
+                    
+                    if (Input.GetKeyDown("space"))
+                    {
+                        body = obj[i];
+                    }
+                    else
+                    {
+                        MainCanvas.Instance.ShowHelpText(HelpText.ActionToDragCorpse);
+                    }
+                    bodyFound = true;
+
+                    break;
+                }
+            }
+
+            if (!bodyFound)
+            {
+                MainCanvas.Instance.HideHelpText(HelpText.ActionToDragCorpse);
+            }
+        }
+        else if (body != null)
+        {
+            //GameObject.Destroy(gameObject.GetComponent("DistanceJoint2D"));
+            if (Input.GetKeyUp("space"))
+            {
+                body = null;
+                MainCanvas.Instance.HideHelpText(HelpText.ActionToDropCorpse);
+            } else {
+                MainCanvas.Instance.ShowHelpText(HelpText.ActionToDropCorpse);
+            }
 		}
 
 		movDirection = new Vector2(xm, ym);

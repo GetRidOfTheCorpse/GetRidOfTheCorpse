@@ -37,6 +37,9 @@ public class BookshelfReader : MonoBehaviour {
 
             if(!controller.enabled) {
                 overlayText.text = bookTexts[Random.Range(0, bookTexts.Length)];
+                MainCanvas.Instance.ShowHelpText(HelpText.ActionToClose);
+            } else {
+                MainCanvas.Instance.ShowHelpText(HelpText.ActionToRead);
             }
 
             overlayBackground.CrossFadeAlpha(targetAlpha, 0.33f, true);
@@ -47,12 +50,14 @@ public class BookshelfReader : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Bookshelf")) {
             canReadBookshelf = true;
+            MainCanvas.Instance.ShowHelpText(HelpText.ActionToRead);
         }
     }
 
     void OnTriggerExit2D(Collider2D other) {
         if (other.CompareTag("Bookshelf")) {
             canReadBookshelf = false;
+            MainCanvas.Instance.HideHelpText(HelpText.ActionToRead);
         }
     }
 
