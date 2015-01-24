@@ -19,7 +19,7 @@ public class BodyController : MonoBehaviour {
 			renderer.sortingOrder = -1;
 		}
 		else{
-			renderer.sortingOrder = 1;
+			renderer.sortingOrder = 2;
 		}
 	}
 }
