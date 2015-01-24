@@ -81,10 +81,23 @@ public class PlayerController : MonoBehaviour {
 		movDirection *= 5;
 
 		if(body != null){
+			//setAnimSpeed(0.25f);
+			animator.speed = 0.2f;
 			Transform other = (Transform) body.GetComponent("Transform");
 			other.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(other.position.y - myTransform.position.y, other.position.x - myTransform.position.x) * Mathf.Rad2Deg);
 		}
+		else{
+			animator.speed = 0.5f;
+			//setAnimSpeed(0.5f);
+		}
 
 		rigidBody.velocity = movDirection;
+	}
+
+	private void setAnimSpeed(float speed){
+		/*animation["walk_up"].speed = speed;
+		animation["walk_down"].speed = speed;
+		animation["walk_left"].speed = speed;
+		animation["walk_right"].speed = speed;*/
 	}
 }
