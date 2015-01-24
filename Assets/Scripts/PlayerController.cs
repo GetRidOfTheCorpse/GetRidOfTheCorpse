@@ -144,4 +144,13 @@ public class PlayerController : MonoBehaviour {
 
 		rigidBody.velocity = movDirection;
 	}
+
+    void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("DoorOut"))
+        {
+            enabled = false;
+            rigidbody2D.velocity = Vector2.zero;
+            MainCanvas.Instance.FadeOut();
+        }
+    }
 }
