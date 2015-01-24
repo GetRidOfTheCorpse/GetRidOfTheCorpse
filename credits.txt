@@ -14,5 +14,5 @@ Markus Brenner: email@example.com
 Daniel Fodh: email@example.com
 Dorina Fischbach: email@example.com
 Volker Bischoff: email@example.com
-Andreas Solleder: email@example.com
+Andreas Solleder: sollederandreas@gmail.com
 Niko Reitmeier: email@example.com
