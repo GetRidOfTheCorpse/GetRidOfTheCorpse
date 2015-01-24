@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="128" tileheight="128" nextobjectid="42">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="128" tileheight="128" nextobjectid="44">
  <tileset firstgid="1" source="Sprites/struct.xml"/>
  <layer name="Ground" width="20" height="20">
   <properties>
@@ -139,8 +139,6 @@
     <property name="layer name" value="BodyLayer"/>
    </properties>
   </object>
-  <object id="37" name="DoorOut" type="Trigger" x="1152" y="128" width="256" height="128"/>
-  <object id="41" name="DoorIn" type="Trigger" x="1152" y="2304" width="256" height="128"/>
  </objectgroup>
  <layer name="overlays" width="20" height="20">
   <data encoding="csv">
@@ -166,4 +164,17 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup name="Trigger">
+  <object id="37" name="DoorOut" type="Trigger" x="1152" y="128" width="256" height="128"/>
+  <object id="41" name="DoorIn" type="Trigger" x="1152" y="2304" width="256" height="128">
+   <properties>
+    <property name="add component1" value="Halo"/>
+   </properties>
+  </object>
+  <object id="43" name="Bookshelf" type="Trigger" x="2176" y="1152" width="128" height="128">
+   <properties>
+    <property name="tag" value="Bookshelf"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

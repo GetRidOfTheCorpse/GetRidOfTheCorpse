@@ -181,6 +181,10 @@ namespace X_UniTMX
 				Dictionary<int, List<Property>> tileLayersProperties = new Dictionary<int,List<Property>>();
 				Dictionary<int, List<Property>> objectLayersProperties = new Dictionary<int,List<Property>>();
 				Dictionary<int, List<Property>> imageLayersProperties = new Dictionary<int, List<Property>>();
+
+				GenerateTileCollisions.boolValue = true;
+
+
 				foreach (NanoXMLNode layerNode in mapNode.SubNodes)
 				{
 					if (layerNode.Name.Equals("properties"))
@@ -200,7 +204,7 @@ namespace X_UniTMX
 					{
 						objectLayerNodes.Add(layerNode);
 						objectLayers.Add(layerNode.GetAttribute("name").Value);
-						generateCollider.Add(false);
+						generateCollider.Add(true);
 						collidersIs2D.Add(true);
 						collidersWidth.Add(1);
 						collidersZDepth.Add(0);
@@ -229,7 +233,7 @@ namespace X_UniTMX
 					{
 						tileLayers.Add(layerNode.GetAttribute("name").Value);
 						// Make Unique Tiles
-						makeUniqueTiles.Add(false);
+						makeUniqueTiles.Add(true);
 						// properties
 						tileLayersFoldoutProperties.Add(false);
 						tileLayersProperties.Add(tileLayers.Count - 1, new List<Property>());
