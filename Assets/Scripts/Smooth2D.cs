@@ -6,6 +6,12 @@
      public float dampTime = 0.15f;
      private Vector3 velocity = Vector3.zero;
      public Transform target;
+
+     void Start() {
+        if(target == null) {
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+     }
  
      // Update is called once per frame
      void Update () 
