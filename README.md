@@ -5,10 +5,13 @@ After committing a brutal and bloody crime, Seymour finds himself with the corps
 
 ## Contributors
 
-Programming: Paul Tolstoi, Markus Brenner, Daniel Fodh
-Graphics: Dorina Fischbach, Volker Bischoff
-Level Design : Andreas Solleder
-Sound: Niko Reitmeier
+Paul Tolstoi: paul.tolstoi@gmail.com
+Markus Brenner: markus.brenner@uni-ulm.de
+Daniel Fedh: daniel.fedh@gmail.com
+Dorina Fischbach: dorina.fischbach@stud.uni-regensburg.de
+Volker Bischoff: volksn@web.de
+Andreas Solleder: sollederandreas@gmail.com
+Niko Reitmeier: myghtyn@web.de
 
 
 ## Installation
@@ -16,3 +19,9 @@ Sound: Niko Reitmeier
 ### Win
 
 ### MacOS
+
+## In Action
+Youtube URL
+
+##Hashtags
+#ggjmuc #ggjmuc15 #ggjmuc2015 #globalgamejam

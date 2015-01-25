@@ -8,10 +8,10 @@ Level Design : Andreas Solleder
 Sound: Niko Reitmeier
 
 
-Paul Tolstoi: email@example.com
-Markus Brenner: email@example.com
-Daniel Fedh: email@example.com
-Dorina Fischbach: email@example.com
-Volker Bischoff: email@example.com
+Paul Tolstoi: paul.tolstoi@gmail.com
+Markus Brenner: markus.brenner@uni-ulm.de
+Daniel Fedh: daniel.fedh@gmail.com
+Dorina Fischbach: dorina.fischbach@stud.uni-regensburg.de
+Volker Bischoff: volksn@web.de
 Andreas Solleder: sollederandreas@gmail.com
-Niko Reitmeier: email@example.com
+Niko Reitmeier: myghtyn@web.de
