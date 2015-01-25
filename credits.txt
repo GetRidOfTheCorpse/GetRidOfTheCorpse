@@ -1,18 +1,17 @@
 @@ Global Game Jam 2015
-@@ Author: Andreas Solleder
-@@ Contributors: Paul Tolstoi, Markus Brenner, Daniel Fodh, Dorina Fischbach, Volker Bischoff, Andreas Solleder, Niko Reitmeier
+@@ Authors: Paul Tolstoi, Markus Brenner, Daniel Fedh, Dorina Fischbach, Volker Bischoff, Andreas Solleder, Niko Reitmeier
 
 
-Programming: Paul Tolstoi, Markus Brenner, Daniel Fodh
+Programming: Paul Tolstoi, Markus Brenner, Daniel Fedh
 Graphics: Dorina Fischbach, Volker Bischoff
 Level Design : Andreas Solleder
 Sound: Niko Reitmeier
 
 
-Paul Tolstoi: email@example.com
-Markus Brenner: email@example.com
-Daniel Fodh: email@example.com
-Dorina Fischbach: email@example.com
-Volker Bischoff: email@example.com
+Paul Tolstoi: paul.tolstoi@gmail.com
+Markus Brenner: markus.brenner@uni-ulm.de
+Daniel Fedh: daniel.fedh@gmail.com
+Dorina Fischbach: dorina.fischbach@stud.uni-regensburg.de
+Volker Bischoff: volksn@web.de
 Andreas Solleder: sollederandreas@gmail.com
-Niko Reitmeier: email@example.com
+Niko Reitmeier: myghtyn@web.de
