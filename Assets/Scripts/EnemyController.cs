@@ -210,7 +210,6 @@ public class EnemyController : MonoBehaviour
                 detectedCharacters.Add(character);
                 character.SendMessage("GotYou", SendMessageOptions.DontRequireReceiver);
 
-                //SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
             }
 
         }
