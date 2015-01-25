@@ -196,6 +196,8 @@ MonoBehaviour:
     audioClip: {fileID: 8300000, guid: b56092c727ee84b39800820731d02992, type: 3}
   - soundEffect: 1
     audioClip: {fileID: 8300000, guid: 68578b86ec3864a76b77fb281a48f10e, type: 3}
+  - soundEffect: 5
+    audioClip: {fileID: 8300000, guid: 5894eb2a842904ee7ad201b67c551dae, type: 3}
   - soundEffect: 2
     audioClip: {fileID: 8300000, guid: d4c4dd629d7c74515804f85164052ba5, type: 3}
 --- !u!82 &858676446
@@ -533,7 +535,6 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Priority: 3
   ignoreReversedGraphics: 1
   blockingObjects: 0
   m_BlockingMask:

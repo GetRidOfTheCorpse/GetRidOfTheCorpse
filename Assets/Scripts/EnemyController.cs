@@ -250,7 +250,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Path for " + name + " " + pathName + " not found!");
+            //Debug.LogWarning("Path for " + name + " " + pathName + " not found!");
 
             points = new Vector3[] { this.transform.position, this.transform.position };
             isStatic = true;
@@ -282,7 +282,7 @@ public class EnemyController : MonoBehaviour
         float distanceStartToPointBefore = (points[indexToPointBefore] - points[startPoint]).magnitude;
         float distanceStartToPointAfter = (points[indexToPointAfter] - points[startPoint]).magnitude;
 
-        float distanceToStartPoint = (points[startPoint] - this.transform.position).magnitude;
+        //float distanceToStartPoint = (points[startPoint] - this.transform.position).magnitude;
 
         if (distanceToPointBefore / distanceStartToPointBefore < distanceToPointAfter / distanceStartToPointAfter)
             startPoint = indexToPointBefore;
