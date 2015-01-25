@@ -190,6 +190,8 @@ namespace X_UniTMX
 		/// </summary>
 		public bool GlobalMakeUniqueTiles = false;
 
+        public List<Material> materials;
+
 		private string _mapName = "Map";
 		private string _mapPath = "Map";
 		private string _mapExtension = ".tmx";
@@ -819,7 +821,7 @@ namespace X_UniTMX
 		void ContinueLoadingTiledMapAfterTileSetsLoaded()
         {
             // Generate Materials for Map batching
-            List<Material> materials = new List<Material>();
+            materials = new List<Material>();
             // Generate Materials
             int i = 0;
 

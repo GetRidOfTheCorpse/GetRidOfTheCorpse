@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using X_UniTMX;
 
 [Serializable]
 public struct AnimatedMaterial
@@ -17,6 +18,13 @@ public class MaterialAnimation : MonoBehaviour
 
     void Start()
     {
+        TiledMapComponent tmc = GameObject.FindObjectOfType(typeof(TiledMapComponent)) as TiledMapComponent;
+        var i = 0;
+        foreach(var mat in tmc.TiledMap.materials) {
+            animatedMaterials[i].material = mat;
+        }
+
+
         StartCoroutine(Animate(delay));
     }
 

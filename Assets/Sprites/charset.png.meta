@@ -213,8 +213,8 @@ TextureImporter:
         y: 640
         width: 128
         height: 256
-      alignment: 9
-      pivot: {x: .5, y: .75}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: corpse_down
       rect:
@@ -223,8 +223,8 @@ TextureImporter:
         y: 640
         width: 128
         height: 256
-      alignment: 9
-      pivot: {x: .5, y: .25}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: corpse_right
       rect:
@@ -233,8 +233,8 @@ TextureImporter:
         y: 512
         width: 256
         height: 128
-      alignment: 9
-      pivot: {x: .649999976, y: .5}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: corpse_left
       rect:
@@ -243,8 +243,8 @@ TextureImporter:
         y: 511
         width: 256
         height: 128
-      alignment: 9
-      pivot: {x: .349999994, y: .5}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: down_corpse_1
       rect:
