@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
@@ -23,6 +23,7 @@ public class EnemyController : MonoBehaviour
     private float speedMultiplier = 0.1f;
 
     private GameObject player;
+    private bool previouseCharacterDetected;
     private bool characterDetected;
 
     private GameObject deadBody;
@@ -60,12 +61,12 @@ public class EnemyController : MonoBehaviour
         Vector3 target = Vector3.up;
         this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg - 90);
 
-
+        detectedCharacters = new List<GameObject>();
     }
 
     void FixedUpdate()
     {
-        detectedCharacters = new List<GameObject>();
+        detectedCharacters.Clear();
 
         UpdatePositionAndRotation();
         ViewConeCharacterIntersection(player);
@@ -168,21 +169,29 @@ public class EnemyController : MonoBehaviour
     {
         characterDetected = detectedCharacters.Count > 0;
 
-        if (detectedCharacters.Contains(deadBody))
+        if (detectedCharacters.Contains(player))
         {
-            PlayerController.Instance.GotYou(true);
-        }
-        else if (detectedCharacters.Contains(player))
-        {
-            if (bubbleTime < bubbleTimeOut)
+            if (!previouseCharacterDetected && characterDetected)
             {
-                bubbleTime += Time.fixedDeltaTime;
-                bubble.enabled = true;
+                SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
+                previouseCharacterDetected = characterDetected;
+            PlayerController.Instance.GotYou(true);
             }
-            else bubble.enabled = false;
-        }
-        else bubbleTime = 0;
 
+            bubble.enabled = true;
+        }
+        else
+        {
+            bubbleTime = 0;
+            previouseCharacterDetected = false;
+        }
+
+        if (bubbleTime > bubbleTimeOut)
+        {
+            bubble.enabled = false;
+        }
+
+        bubbleTime += Time.fixedDeltaTime;
 
 
 
@@ -208,8 +217,7 @@ public class EnemyController : MonoBehaviour
             if (coneArea.magnitude < coneAngle / 45f && lookingTowardsPlayer)
             {
                 detectedCharacters.Add(character);
-                PlayerController.Instance.GotYou();
-
+                character.SendMessage("GotYou", SendMessageOptions.DontRequireReceiver);
             }
 
         }
