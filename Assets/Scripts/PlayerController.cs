@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
-    public float CharacterSpeed = 7.5f;
+    public float CharacterSpeed = 6f;
     public RuntimeAnimatorController[] animationControllers;
 
     private GameObject body;
@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour
     public bool showCorpseHelp = false;
 
     private bool hasKey = false;
+
+    public bool HasBody() {
+        return body != null;
+    }
 
     // Use this for initialization
 	void Start () {
@@ -122,7 +126,7 @@ public class PlayerController : MonoBehaviour
 
         movDirection = new Vector2(xm, ym);
         //myTransform.rotation = Quaternion.Euler(0, 0, rot);
-        movDirection *= CharacterSpeed;
+        movDirection *= CharacterSpeed * (HasBody() ? 0.675f : 1);
 
         if (body != null)
         {
