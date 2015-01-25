@@ -7,7 +7,8 @@ public enum SoundEffect {
     PickUpLine,
     DropLine,
     Collect,
-    Decollect
+    Decollect,
+    Open
 }
 
 [System.Serializable]

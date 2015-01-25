@@ -19,16 +19,23 @@ public class PlayerController : MonoBehaviour
 
     public bool showCorpseHelp = false;
 
-    private bool hasKey = false;
+    private GameObject lastKey = null;
+    private SpriteRenderer smallKey;
 
     public bool HasBody() {
         return body != null;
+    }
+
+    public bool HasKey() {
+        return lastKey != null;
     }
 
     // Use this for initialization
 	void Start () {
         myTransform = (Transform)GetComponent("Transform");
         animator = (Animator)GetComponent("Animator");
+        smallKey = transform.FindChild("SmallKey").GetComponent<SpriteRenderer>();
+        smallKey.enabled = false;
     }
 
     // Update is called once per frame
@@ -180,18 +187,32 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.CompareTag("DoorIn"))
         {
-            MainCanvas.Instance.ShowHelpText(HelpText.WrongDirection, 3);
+            
         }
-        else if (other.CompareTag("Key")) 
+        else if (other.CompareTag("Key"))
         {
             SoundManager.Instance.OneShot(SoundEffect.Collect, gameObject);
-            hasKey = true;
-            Destroy(other.gameObject);
+            lastKey = other.gameObject;
+            smallKey.enabled = true;
+            smallKey.animation.Play("small_key_get", PlayMode.StopAll);
+            other.gameObject.SetActive(false);
         }
-        else if (other.CompareTag("Block") && hasKey) 
+        else if (other.CompareTag("Block") && HasKey())
         {
-            SoundManager.Instance.OneShot(SoundEffect.Decollect, gameObject);
+            SoundManager.Instance.OneShot(SoundEffect.Open, gameObject);
             Destroy(other.gameObject);
+            lastKey = null;
+            smallKey.enabled = false;
+        }
+    }
+
+    void GotYou() {
+        if (HasKey())
+        {
+            lastKey.SetActive(true);
+            smallKey.animation.Play("small_key_remove");
+            lastKey = null;
+            SoundManager.Instance.OneShot(SoundEffect.Decollect, gameObject);
         }
     }
 
