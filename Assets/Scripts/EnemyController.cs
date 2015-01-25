@@ -15,6 +15,7 @@ public class EnemyController : MonoBehaviour
     private int endPoint;
     private int iterator = 1;
     private bool isRing;
+    private bool isStatic;
 
     private float longestDistance = float.MinValue;
 
@@ -63,42 +64,45 @@ public class EnemyController : MonoBehaviour
 
     private void UpdateAnimation()
     {
+        direction = viewConeTransform.up;
         direction.Normalize();
-        if (!playerDetected)
+
+        if (playerDetected)
         {
-            if (direction.y > threshold)
-            {
+            animator.SetBool("Moving", false);
+        }
+        else if (direction.y > threshold)
+        {
 
-                animator.SetInteger("Direction", 2);
+            animator.SetInteger("Direction", 2);
+            if (!isStatic)
                 animator.SetBool("Moving", true);
-            }
-            else if (Mathf.Abs(direction.y) > threshold)
-            {
+        }
+        else if (Mathf.Abs(direction.y) > threshold)
+        {
 
-                animator.SetInteger("Direction", 0);
+            animator.SetInteger("Direction", 0);
+            if (!isStatic)
                 animator.SetBool("Moving", true);
-            }
-            else
-            {
-                if (direction.x > threshold)
-                {
-
-                    animator.SetInteger("Direction", 3);
-                    animator.SetBool("Moving", true);
-                }
-
-                else if (Mathf.Abs(direction.x) > threshold)
-                {
-
-                    animator.SetInteger("Direction", 1);
-                    animator.SetBool("Moving", true);
-                }
-
-            }
         }
         else
         {
-            animator.SetBool("Moving", false);
+            if (direction.x > threshold)
+            {
+
+                animator.SetInteger("Direction", 3);
+                if (!isStatic)
+                    animator.SetBool("Moving", true);
+            }
+
+            else if (Mathf.Abs(direction.x) > threshold)
+            {
+
+                animator.SetInteger("Direction", 1);
+                if (!isStatic)
+                    animator.SetBool("Moving", true);
+            }
+
         }
 
     }
@@ -133,18 +137,19 @@ public class EnemyController : MonoBehaviour
         {
             lerpTime -= 1;
             startPoint = endPoint;
+
+            if (endPoint == points.Length - 1 && isRing)
+                endPoint = 0;
+
+            else if (endPoint == points.Length - 1 && !isRing)
+                iterator = -1;
+
+            else if (endPoint == 0)
+                iterator = 1;
+
             endPoint += iterator;
         }
 
-        if (endPoint == points.Length - 1 && !isRing)
-            iterator = -1;
-
-        if (endPoint == points.Length - 1 && isRing)
-            endPoint = 0;
-
-
-        if (endPoint == 0)
-            iterator = 1;
     }
 
     private void ViewConePlayerIntersection()
@@ -212,6 +217,7 @@ public class EnemyController : MonoBehaviour
             Debug.LogWarning("Path for " + name + " " + pathName + " not found!");
 
             points = new Vector3[] { this.transform.position, this.transform.position };
+            isStatic = true;
         }
 
 
