@@ -217,7 +217,7 @@
  <objectgroup name="GameLogic">
   <object id="37" name="DoorOut" type="Trigger" x="702" y="184" width="256" height="128">
    <properties>
-    <property name="next level" value="level_001"/>
+    <property name="next level" value="level_002"/>
     <property name="tag" value="DoorOut"/>
    </properties>
   </object>

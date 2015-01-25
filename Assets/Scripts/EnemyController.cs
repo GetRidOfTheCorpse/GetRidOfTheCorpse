@@ -170,7 +170,7 @@ public class EnemyController : MonoBehaviour
 
         if (detectedCharacters.Contains(deadBody))
         {
-            Debug.Log("You LOOOOOOSE");
+            Application.LoadLevel("LoseScreen");
         }
         else if (detectedCharacters.Contains(player))
         {
@@ -208,6 +208,9 @@ public class EnemyController : MonoBehaviour
             if (coneArea.magnitude < coneAngle / 45f && lookingTowardsPlayer)
             {
                 detectedCharacters.Add(character);
+                character.SendMessage("GotYou", SendMessageOptions.DontRequireReceiver);
+
+                //SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
             }
 
         }
