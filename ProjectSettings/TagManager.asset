@@ -7,6 +7,7 @@ TagManager:
   - Bookshelf
   - DoorOut
   - DoorIn
+  - Arrow
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
@@ -49,6 +50,10 @@ TagManager:
     userID: 1
     uniqueID: 67378473
     locked: 0
+  - name: Carpets
+    userID: 8
+    uniqueID: 850075325
+    locked: 0
   - name: Walls
     userID: 2
     uniqueID: 1390344533
@@ -61,15 +66,23 @@ TagManager:
     userID: 4
     uniqueID: 199559527
     locked: 0
-  - name: Decorations
+  - name: Decorations1
     userID: 5
     uniqueID: 383871361
+    locked: 0
+  - name: Decorations2
+    userID: 9
+    uniqueID: 4213559623
+    locked: 0
+  - name: Tables
+    userID: 10
+    uniqueID: 3934421705
     locked: 0
   - name: Person
     userID: 6
     uniqueID: 2421679827
     locked: 0
-  - name: overlays
+  - name: Overlays
     userID: 7
     uniqueID: 621358185
     locked: 0

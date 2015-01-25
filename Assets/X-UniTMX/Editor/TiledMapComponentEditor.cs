@@ -233,7 +233,7 @@ namespace X_UniTMX
 					{
 						tileLayers.Add(layerNode.GetAttribute("name").Value);
 						// Make Unique Tiles
-						makeUniqueTiles.Add(true);
+						makeUniqueTiles.Add(false);
 						// properties
 						tileLayersFoldoutProperties.Add(false);
 						tileLayersProperties.Add(tileLayers.Count - 1, new List<Property>());

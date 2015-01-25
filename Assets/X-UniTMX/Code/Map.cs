@@ -283,6 +283,10 @@ namespace X_UniTMX
 		/// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
 		/// </summary>
 		public const string Property_SendMessage = "send message";
+        /// <summary>
+        /// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
+        /// </summary>
+        public const string Property_HelpArrow = "show help arrow";
 		#endregion
 
 		#region Constructors
@@ -818,17 +822,12 @@ namespace X_UniTMX
             List<Material> materials = new List<Material>();
             // Generate Materials
             int i = 0;
-            if (TileSets.Count > 1)
+
+            for (i = 0; i < TileSets.Count; i++)
             {
-                for (i = 0; i < TileSets.Count; i++)
-                {
-                    Material layerMat = new Material(BaseTileMaterial);
-                    layerMat.mainTexture = TileSets[i].Texture;
-                    materials.Add(layerMat);
-                }
-            } else {
-                BaseTileMaterial.mainTexture = TileSets[0].Texture;
-                materials.Add(BaseTileMaterial);
+                Material layerMat = new Material(BaseTileMaterial);
+                layerMat.mainTexture = TileSets[i].Texture;
+                materials.Add(layerMat);
             }
 
 			Layers = new List<Layer>();
@@ -2705,6 +2704,11 @@ namespace X_UniTMX
                     gameObject.BroadcastMessage(menssage[0]);
                 }
                 c++;
+            }
+
+            if(obj.HasProperty(Property_HelpArrow)) {
+                var pc = gameObject.GetComponent<PlayerController>();
+                pc.showCorpseHelp = true;
             }
 
             if (gameObject.renderer != null)

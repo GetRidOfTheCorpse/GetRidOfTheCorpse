@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+    public float CharacterSpeed = 7.5f;
     public RuntimeAnimatorController[] animationControllers;
 
     private GameObject body;
@@ -16,9 +17,11 @@ public class PlayerController : MonoBehaviour
     private int xm = 0;
     private int ym = 0;
 
+    public bool showCorpseHelp = false;
+
+
     // Use this for initialization
-    void Start()
-    {
+	void Start () {
         myTransform = (Transform)GetComponent("Transform");
         animator = (Animator)GetComponent("Animator");
     }
@@ -89,7 +92,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else
                     {
-                        MainCanvas.Instance.ShowHelpText(HelpText.ActionToDragCorpse);
+                        if (showCorpseHelp) MainCanvas.Instance.ShowHelpText(HelpText.ActionToDragCorpse);
                         animator.runtimeAnimatorController = animationControllers[0];
 
                     }
@@ -99,7 +102,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (!bodyFound)
+            if (!bodyFound && showCorpseHelp)
             {
                 MainCanvas.Instance.HideHelpText(HelpText.ActionToDragCorpse);
             }
@@ -111,23 +114,20 @@ public class PlayerController : MonoBehaviour
             {
                 body = null;
                 MainCanvas.Instance.HideHelpText(HelpText.ActionToDropCorpse);
-            }
-            else
-            {
-                MainCanvas.Instance.ShowHelpText(HelpText.ActionToDropCorpse);
+            } else {
+                if (showCorpseHelp) MainCanvas.Instance.ShowHelpText(HelpText.ActionToDropCorpse);
             }
         }
 
         movDirection = new Vector2(xm, ym);
         //myTransform.rotation = Quaternion.Euler(0, 0, rot);
-        movDirection *= 5;
+        movDirection *= CharacterSpeed;
 
         if (body != null)
         {
             animator.speed = 0.2f;
             Transform other = (Transform)body.GetComponent("Transform");
             Animator otherAnim = (Animator)body.GetComponent("Animator");
-
 
             int charAngle = animator.GetInteger("Direction");
             Vector2 diff = new Vector2();
@@ -167,11 +167,35 @@ public class PlayerController : MonoBehaviour
         {
             enabled = false;
             rigidbody2D.velocity = Vector2.zero;
+            animator.SetBool("Moving", false);
             MainCanvas.Instance.FadeOut();
         }
         else if (other.CompareTag("DoorIn"))
         {
             MainCanvas.Instance.ShowHelpText(HelpText.WrongDirection, 3);
         }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Arrow"))
+        {
+            var sprite = other.GetComponent<SpriteRenderer>();
+
+            StartCoroutine(FadeOutArrow(sprite));
+        }
+    }
+
+    IEnumerator FadeOutArrow(SpriteRenderer arrow)
+    {
+        while (arrow.color.a > 0)
+        {
+            var color = arrow.color;
+            color.a -= Time.deltaTime * 2;
+            arrow.color = color;
+            yield return null;
+        }
+
+        Destroy(arrow.gameObject);
     }
 }
