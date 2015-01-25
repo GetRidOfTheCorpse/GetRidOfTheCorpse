@@ -35,6 +35,7 @@ public class EnemyController : MonoBehaviour
         PathToPoints();
         player = GameObject.FindGameObjectWithTag("Player");
         animator = (Animator)GetComponent("Animator");
+        animator.speed = 0.5f;
 
         spriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
         spriteRenderer.color = Color.white;
