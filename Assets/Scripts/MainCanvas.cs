@@ -85,13 +85,13 @@ public class MainCanvas : MonoBehaviour
         HideHelpText(currentHelpText);
     }
 
-    public void FadeOut(float duration = 1)
+    public void FadeOut(System.Action callback = null, float duration = 1)
     {
-        StartCoroutine(FadeOutDelay(duration));
+        StartCoroutine(FadeOutDelay(callback, duration));
         letterBoxFlash.CrossFadeAlpha(TargetAlpha, duration, false);
     }
 
-    private IEnumerator FadeOutDelay(float duration)
+    private IEnumerator FadeOutDelay(System.Action callback, float duration)
     {
         float time = 0;
 
@@ -104,6 +104,8 @@ public class MainCanvas : MonoBehaviour
 
             yield return null;  
         }
+
+        callback();
     }
 
     public void FadeIn(float duration = 1)

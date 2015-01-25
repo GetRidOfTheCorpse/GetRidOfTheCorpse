@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="30" tilewidth="128" tileheight="128" nextobjectid="53">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="30" tilewidth="128" tileheight="128" nextobjectid="56">
  <tileset firstgid="1" source="Sprites/struct1.xml"/>
  <tileset firstgid="257" source="Sprites/struct2.xml"/>
  <layer name="Ground" width="24" height="30">
@@ -277,7 +277,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="Person">
+ <objectgroup name="Persons">
   <object id="35" name="PlayerSpawn" type="NoCollider" x="590.91" y="3294.66">
    <properties>
     <property name="0-prefab" value="Player"/>
@@ -285,11 +285,25 @@
     <property name="layer name" value="PlayerLayer"/>
    </properties>
   </object>
-  <object id="36" name="BodySpawn" type="NoCollider" x="501.7" y="3320.36" rotation="45">
+  <object id="36" name="BodySpawn" type="NoCollider" x="501.7" y="3320.36">
    <properties>
     <property name="0-prefab" value="Body"/>
     <property name="0-prefab path" value="Prefabs/"/>
     <property name="layer name" value="BodyLayer"/>
+   </properties>
+  </object>
+  <object id="50" name="Guard" type="NoCollider" x="576" y="1337" rotation="180">
+   <properties>
+    <property name="0-prefab" value="Guard"/>
+    <property name="0-prefab path" value="Prefabs/"/>
+    <property name="set material color" value="255,0,0,255"/>
+   </properties>
+  </object>
+  <object id="52" name="Guard" type="NoCollider" x="2624" y="1977" rotation="320">
+   <properties>
+    <property name="0-prefab" value="Guard"/>
+    <property name="0-prefab path" value="Prefabs/"/>
+    <property name="set material color" value="255,0,0,255"/>
    </properties>
   </object>
  </objectgroup>
@@ -303,18 +317,17 @@
   <object id="47" name="DoorOut" type="Trigger" x="2355" y="214" width="288" height="160"/>
   <object id="48" name="YouShallNotPass" type="Collider" x="2362" y="85" width="256" height="160"/>
   <object id="49" name="YouShallNotGoBack" type="Collider" x="442" y="3477" width="256" height="128"/>
-  <object id="50" name="Guard" type="NoCollider" x="576" y="1337" rotation="180">
+  <object id="53" name="Key" type="Trigger" x="1600" y="1088">
    <properties>
-    <property name="0-prefab" value="Guard"/>
+    <property name="0-prefab" value="Key"/>
     <property name="0-prefab path" value="Prefabs/"/>
-    <property name="set material color" value="255,0,0,255"/>
    </properties>
   </object>
-  <object id="52" name="Guard" type="NoCollider" x="2624" y="1977" rotation="320">
+  <object id="54" name="Block" type="NoCollider" x="956" y="2615">
    <properties>
-    <property name="0-prefab" value="Guard"/>
+    <property name="0-prefab" value="Block"/>
     <property name="0-prefab path" value="Prefabs/"/>
-    <property name="set material color" value="255,0,0,255"/>
+    <property name="size" value="2"/>
    </properties>
   </object>
  </objectgroup>

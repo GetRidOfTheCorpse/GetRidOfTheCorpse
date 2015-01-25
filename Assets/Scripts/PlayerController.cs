@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     public bool showCorpseHelp = false;
 
+    private bool hasKey = false;
 
     // Use this for initialization
 	void Start () {
@@ -163,16 +164,26 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("DoorOut") && body != null)
+        if (other.GetComponent<NextLevel>() != null && body != null)
         {
             enabled = false;
             rigidbody2D.velocity = Vector2.zero;
             animator.SetBool("Moving", false);
-            MainCanvas.Instance.FadeOut();
+            var nextLevel = other.GetComponent<NextLevel>().nextLevel;
+            MainCanvas.Instance.FadeOut(() => Application.LoadLevel(nextLevel));
         }
         else if (other.CompareTag("DoorIn"))
         {
             MainCanvas.Instance.ShowHelpText(HelpText.WrongDirection, 3);
+        }
+        else if (other.CompareTag("Key")) 
+        {
+            hasKey = true;
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("Block") && hasKey) 
+        {
+            Destroy(other.gameObject);
         }
     }
 
