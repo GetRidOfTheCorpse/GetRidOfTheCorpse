@@ -211,6 +211,7 @@ public class PlayerController : MonoBehaviour
         {
             lastKey.SetActive(true);
             smallKey.animation.Play("small_key_remove");
+            lastKey = null;
         }
     }
 
