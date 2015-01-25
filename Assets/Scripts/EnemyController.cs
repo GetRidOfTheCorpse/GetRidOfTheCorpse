@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public class EnemyController : MonoBehaviour
 {
     public float WalkSpeed = 1;
-    public float TurningSpeed = 20;
     public float coneAngle = 11;
     public float coneLength = 5;
 
@@ -30,6 +29,9 @@ public class EnemyController : MonoBehaviour
     private Vector3 direction = Vector3.zero;
     private float threshold = 0.5f;
 
+    private Vector3 lookDirection;
+    private Transform viewConeTransform;
+
     void Start()
     {
         PathToPoints();
@@ -40,6 +42,9 @@ public class EnemyController : MonoBehaviour
         spriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
         spriteRenderer.color = Color.white;
 
+
+        viewConeTransform = transform.GetChild(0);
+        viewConeTransform.localScale = new Vector3((coneAngle / 13f), coneLength * 0.4f, 1);
 
         Vector3 target = Vector3.up;
         this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg - 90);
@@ -112,6 +117,11 @@ public class EnemyController : MonoBehaviour
 
             direction = this.transform.position - previousPosition;
 
+            lookDirection = -direction;
+            lookDirection.Normalize();
+
+            viewConeTransform.rotation = Quaternion.FromToRotation(Vector3.up, lookDirection * -coneLength);
+
             lerpTime += Time.fixedDeltaTime * (10 / distance) * WalkSpeed * speedMultiplier;
         }
 
@@ -138,8 +148,6 @@ public class EnemyController : MonoBehaviour
     {
         Vector3 toPlayer = player.transform.position - this.transform.position;
 
-        Vector3 lookDirection = -direction;
-        lookDirection.Normalize();
 
         Debug.DrawRay(transform.position, lookDirection * -coneLength, Color.red);
 
@@ -150,7 +158,6 @@ public class EnemyController : MonoBehaviour
         if (toPlayer.magnitude < coneLength)
         {
             toPlayer.Normalize();
-            lookDirection.Normalize();
 
             Vector3 coneArea = Vector3.Cross(lookDirection, toPlayer);
             bool lookingTowardsPlayer = toPlayer.magnitude > (toPlayer + lookDirection).magnitude;
