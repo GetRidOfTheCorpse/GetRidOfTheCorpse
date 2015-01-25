@@ -11,6 +11,8 @@ public class BodyController : MonoBehaviour {
 		playerTransform = (Transform)(obj[0].GetComponent("Transform"));
 		myTransform = (Transform) GetComponent("Transform");
 		renderer = (SpriteRenderer) GetComponent("SpriteRenderer");
+        var blood = transform.FindChild("Blood");
+        blood.SetParent(transform.parent);
 	}
 	
 	// Update is called once per frame

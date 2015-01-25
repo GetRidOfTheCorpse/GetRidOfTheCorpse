@@ -50,6 +50,8 @@ TextureImporter:
     21300090: block
     21300092: bubble_curse
     21300094: key_small
+    21300096: blood
+    21300098: knife
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -558,6 +560,26 @@ TextureImporter:
         y: 675
         width: 44
         height: 52
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: blood
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 301
+        width: 249
+        height: 149
+      alignment: 9
+      pivot: {x: .649999976, y: 1.10000002}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: knife
+      rect:
+        serializedVersion: 2
+        x: 650
+        y: 424
+        width: 103
+        height: 47
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
