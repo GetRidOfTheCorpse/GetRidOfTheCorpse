@@ -46,7 +46,7 @@ public class EnemyController : MonoBehaviour
         initialRotation = this.transform.rotation;
 
         viewConeTransform = transform.GetChild(0);
-        viewConeTransform.localScale = new Vector3((coneAngle / 13f), coneLength * 0.4f, 1);
+        viewConeTransform.localScale = new Vector3((coneAngle / 20f), coneLength * 0.25f, 1);
 
         Vector3 target = Vector3.up;
         this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg - 90);
