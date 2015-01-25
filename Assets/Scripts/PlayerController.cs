@@ -92,6 +92,7 @@ public class PlayerController : MonoBehaviour
                     if (Input.GetKeyDown("space"))
                     {
                         body = obj[i];
+                        SoundManager.Instance.OneShot(SoundEffect.PickUpLine, body);
                         animator.runtimeAnimatorController = animationControllers[1];
 
                     }
@@ -117,6 +118,7 @@ public class PlayerController : MonoBehaviour
             //GameObject.Destroy(gameObject.GetComponent("DistanceJoint2D"));
             if (Input.GetKeyUp("space"))
             {
+                SoundManager.Instance.OneShot(SoundEffect.DropLine, body);
                 body = null;
                 MainCanvas.Instance.HideHelpText(HelpText.ActionToDropCorpse);
             } else {
@@ -182,11 +184,13 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.CompareTag("Key")) 
         {
+            SoundManager.Instance.OneShot(SoundEffect.Collect, gameObject);
             hasKey = true;
             Destroy(other.gameObject);
         }
         else if (other.CompareTag("Block") && hasKey) 
         {
+            SoundManager.Instance.OneShot(SoundEffect.Decollect, gameObject);
             Destroy(other.gameObject);
         }
     }

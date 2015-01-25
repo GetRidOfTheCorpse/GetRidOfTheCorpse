@@ -166,6 +166,10 @@ public class EnemyController : MonoBehaviour
 
             if (coneArea.magnitude < coneAngle / 45f && lookingTowardsPlayer)
             {
+                if (!playerDetected)
+                {
+                    SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
+                }
                 playerDetected = true;
             }
             else playerDetected = false;

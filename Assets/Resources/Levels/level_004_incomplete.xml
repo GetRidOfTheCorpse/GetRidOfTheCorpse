@@ -309,7 +309,7 @@
     <property name="layer name" value="PlayerLayer"/>
    </properties>
   </object>
-  <object id="36" name="BodySpawn" type="NoCollider" x="917.7" y="3768.36" rotation="45">
+  <object id="36" name="BodySpawn" type="NoCollider" x="917.7" y="3768.36">
    <properties>
     <property name="0-prefab" value="Body"/>
     <property name="0-prefab path" value="Prefabs/"/>
