@@ -1662,8 +1662,8 @@ namespace X_UniTMX
 				gameObject.rigidbody.isKinematic = rigidbodyIsKinematic;
 			}
 
-			if (obj.Rotation != 0)
-				gameObject.transform.localRotation = Quaternion.AngleAxis(obj.Rotation, Vector3.forward);
+            if (obj.Rotation != 0)
+                gameObject.transform.localRotation = Quaternion.Euler(0, 0, obj.Rotation);
 
 			if(gameObjectMesh != null)
 				ApplyCustomProperties(gameObjectMesh, obj);

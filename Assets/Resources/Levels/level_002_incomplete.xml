@@ -197,7 +197,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="Persons">
+ <objectgroup name="Person">
   <object id="35" name="PlayerSpawn" type="NoCollider" x="465.91" y="1592.66">
    <properties>
     <property name="0-prefab" value="Player"/>
@@ -205,7 +205,7 @@
     <property name="layer name" value="PlayerLayer"/>
    </properties>
   </object>
-  <object id="36" name="BodySpawn" type="NoCollider" x="440.7" y="1493.36" rotation="45">
+  <object id="36" name="BodySpawn" type="NoCollider" x="440.7" y="1493.36">
    <properties>
     <property name="0-prefab" value="Body"/>
     <property name="0-prefab path" value="Prefabs/"/>
@@ -231,7 +231,7 @@
   </object>
   <object id="45" name="DoorOut" type="Trigger" x="2240" y="570" width="128" height="224">
    <properties>
-    <property name="next level" value="level_001"/>
+    <property name="next level" value="level_003"/>
     <property name="tag" value="DoorOut"/>
    </properties>
   </object>

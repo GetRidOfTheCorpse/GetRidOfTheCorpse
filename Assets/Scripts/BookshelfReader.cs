@@ -30,7 +30,7 @@ public class BookshelfReader : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Space) && canReadBookshelf)
+        if (Input.GetKeyUp(KeyCode.Space) && canReadBookshelf && !controller.HasBody())
         {
             var targetAlpha = controller.enabled ? 1 : 0;
             controller.enabled = !controller.enabled;
