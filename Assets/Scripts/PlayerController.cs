@@ -206,6 +206,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void GotYou() {
+        if (HasKey())
+        {
+            lastKey.SetActive(true);
+            smallKey.animation.Play("small_key_remove");
+            lastKey = null;
+        }
+    }
+
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Arrow"))
