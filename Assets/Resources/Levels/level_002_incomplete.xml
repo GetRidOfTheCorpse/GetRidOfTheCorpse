@@ -197,7 +197,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="Person">
+ <objectgroup name="Persons">
   <object id="35" name="PlayerSpawn" type="NoCollider" x="465.91" y="1592.66">
    <properties>
     <property name="0-prefab" value="Player"/>
@@ -212,6 +212,13 @@
     <property name="layer name" value="BodyLayer"/>
    </properties>
   </object>
+  <object id="46" name="Guard" type="NoCollider" x="1600" y="1183" rotation="180">
+   <properties>
+    <property name="0-prefab" value="Guard"/>
+    <property name="0-prefab path" value="Prefabs/"/>
+    <property name="set material color" value="255,0,0,255"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="GameLogic">
   <object id="41" name="DoorIn" type="Trigger" x="320" y="1690" width="256" height="128"/>
@@ -222,12 +229,10 @@
     <property name="tag" value="Bookshelf"/>
    </properties>
   </object>
-  <object id="45" name="DoorOut" type="Trigger" x="2240" y="570" width="128" height="224"/>
-  <object id="46" name="Guard" type="NoCollider" x="1600" y="1183" rotation="180">
+  <object id="45" name="DoorOut" type="Trigger" x="2240" y="570" width="128" height="224">
    <properties>
-    <property name="0-prefab" value="Guard"/>
-    <property name="0-prefab path" value="Prefabs/"/>
-    <property name="set material color" value="255,0,0,255"/>
+    <property name="next level" value="level_001"/>
+    <property name="tag" value="DoorOut"/>
    </properties>
   </object>
  </objectgroup>

@@ -284,11 +284,15 @@ namespace X_UniTMX
 		/// <summary>
 		/// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
 		/// </summary>
-		public const string Property_SendMessage = "send message";
+        public const string Property_SendMessage = "send message";
         /// <summary>
         /// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
         /// </summary>
         public const string Property_HelpArrow = "show help arrow";
+        /// <summary>
+        /// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
+        /// </summary>
+        public const string Property_NextLevel = "next level";
 		#endregion
 
 		#region Constructors
@@ -831,7 +835,10 @@ namespace X_UniTMX
                 layerMat.mainTexture = TileSets[i].Texture;
                 materials.Add(layerMat);
                 var ma = GameObject.FindObjectOfType(typeof(MaterialAnimation)) as MaterialAnimation;
-                ma.animatedMaterials[i].material = layerMat;
+                if (ma != null)
+                {
+                    ma.animatedMaterials[i].material = layerMat;
+                }
             }
 
 			Layers = new List<Layer>();
@@ -2713,6 +2720,15 @@ namespace X_UniTMX
             if(obj.HasProperty(Property_HelpArrow)) {
                 var pc = gameObject.GetComponent<PlayerController>();
                 pc.showCorpseHelp = true;
+            }
+
+            if(obj.HasProperty(Property_NextLevel)) {
+                var pc = gameObject.AddComponent<NextLevel>();
+                pc.nextLevel = obj.GetPropertyAsString(Property_NextLevel);
+            }
+
+            if(obj.HasProperty("size")) {
+                gameObject.transform.localScale = Vector3.one * obj.GetPropertyAsFloat("size") / 3;
             }
 
             if (gameObject.renderer != null)

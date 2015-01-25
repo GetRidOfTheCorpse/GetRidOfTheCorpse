@@ -8,6 +8,8 @@ TagManager:
   - DoorOut
   - DoorIn
   - Arrow
+  - Key
+  - Block
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
@@ -82,7 +84,15 @@ TagManager:
     userID: 6
     uniqueID: 2421679827
     locked: 0
+  - name: Persons
+    userID: 12
+    uniqueID: 1470780561
+    locked: 0
   - name: Overlays
     userID: 7
     uniqueID: 621358185
+    locked: 0
+  - name: GameLogic
+    userID: 11
+    uniqueID: 3962758649
     locked: 0
