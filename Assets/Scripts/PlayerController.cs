@@ -187,7 +187,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.CompareTag("DoorIn"))
         {
-            MainCanvas.Instance.ShowHelpText(HelpText.WrongDirection, 3);
+            
         }
         else if (other.CompareTag("Key"))
         {
@@ -199,7 +199,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.CompareTag("Block") && HasKey())
         {
-            SoundManager.Instance.OneShot(SoundEffect.Decollect, gameObject);
+            SoundManager.Instance.OneShot(SoundEffect.Open, gameObject);
             Destroy(other.gameObject);
             lastKey = null;
             smallKey.enabled = false;
@@ -212,6 +212,7 @@ public class PlayerController : MonoBehaviour
             lastKey.SetActive(true);
             smallKey.animation.Play("small_key_remove");
             lastKey = null;
+            SoundManager.Instance.OneShot(SoundEffect.Decollect, gameObject);
         }
     }
 
