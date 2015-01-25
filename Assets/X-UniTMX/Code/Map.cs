@@ -828,6 +828,8 @@ namespace X_UniTMX
                 Material layerMat = new Material(BaseTileMaterial);
                 layerMat.mainTexture = TileSets[i].Texture;
                 materials.Add(layerMat);
+                var ma = GameObject.FindObjectOfType(typeof(MaterialAnimation)) as MaterialAnimation;
+                ma.animatedMaterials[i].material = layerMat;
             }
 
 			Layers = new List<Layer>();

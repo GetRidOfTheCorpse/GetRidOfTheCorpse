@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="30" tilewidth="128" tileheight="128" nextobjectid="53">
- <tileset firstgid="1" name="struct1" tilewidth="128" tileheight="128">
-  <image source="../../../Desktop/tileset_v11_1.png" width="2048" height="2048"/>
- </tileset>
- <tileset firstgid="257" name="struct2" tilewidth="128" tileheight="128">
-  <image source="../../../Desktop/tileset_v11_2.png" width="2048" height="2048"/>
- </tileset>
+ <tileset firstgid="1" source="Sprites/struct1.xml"/>
+ <tileset firstgid="257" source="Sprites/struct2.xml"/>
  <layer name="Ground" width="24" height="30">
   <properties>
    <property name="add component1" value="Halo"/>
@@ -282,14 +278,14 @@
 </data>
  </layer>
  <objectgroup name="Person">
-  <object id="35" name="PlayerSpawn" type="NoCollider" x="1329.91" y="2203.66">
+  <object id="35" name="PlayerSpawn" type="NoCollider" x="590.91" y="3294.66">
    <properties>
     <property name="0-prefab" value="Player"/>
     <property name="0-prefab path" value="Prefabs/"/>
     <property name="layer name" value="PlayerLayer"/>
    </properties>
   </object>
-  <object id="36" name="BodySpawn" type="NoCollider" x="1432.7" y="2229.36" rotation="45">
+  <object id="36" name="BodySpawn" type="NoCollider" x="501.7" y="3320.36" rotation="45">
    <properties>
     <property name="0-prefab" value="Body"/>
     <property name="0-prefab path" value="Prefabs/"/>
@@ -297,40 +293,6 @@
    </properties>
   </object>
  </objectgroup>
- <layer name="overlays" width="24" height="30">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
  <objectgroup name="GameLogic">
   <object id="45" name="DoorIn" type="Trigger" x="442" y="3349" width="256" height="128"/>
   <object id="46" name="Bookshelf" type="Trigger" x="1408" y="1920" width="256" height="384">

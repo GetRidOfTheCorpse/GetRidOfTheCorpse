@@ -1,15 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+
+[Serializable]
+public struct AnimatedMaterial
+{
+    public Material material;
+    public Texture2D[] textures;
+}
 
 public class MaterialAnimation : MonoBehaviour
 {
-
-    public Material materialToAnimate;
-    public Texture2D[] textures;
+    public AnimatedMaterial[] animatedMaterials;
     public float delay = 0.1f;
-    private int i;
+    public int i;
 
-    void Start() {
+    void Start()
+    {
         StartCoroutine(Animate(delay));
     }
 
@@ -18,7 +25,14 @@ public class MaterialAnimation : MonoBehaviour
     {
         while (true)
         {
-            materialToAnimate.mainTexture = textures[(i++) % textures.Length];
+            foreach (var am in animatedMaterials)
+            {
+                if (am.material != null)
+                {
+                    am.material.mainTexture = am.textures[i % am.textures.Length];
+                }
+            }
+            ++i;               
             if (delay > 0)
                 yield return new WaitForSeconds(delay);
             else
