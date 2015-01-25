@@ -190,6 +190,8 @@ namespace X_UniTMX
 		/// </summary>
 		public bool GlobalMakeUniqueTiles = false;
 
+        public List<Material> materials;
+
 		private string _mapName = "Map";
 		private string _mapPath = "Map";
 		private string _mapExtension = ".tmx";
@@ -282,7 +284,15 @@ namespace X_UniTMX
 		/// <summary>
 		/// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
 		/// </summary>
-		public const string Property_SendMessage = "send message";
+        public const string Property_SendMessage = "send message";
+        /// <summary>
+        /// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
+        /// </summary>
+        public const string Property_HelpArrow = "show help arrow";
+        /// <summary>
+        /// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
+        /// </summary>
+        public const string Property_NextLevel = "next level";
 		#endregion
 
 		#region Constructors
@@ -815,20 +825,20 @@ namespace X_UniTMX
 		void ContinueLoadingTiledMapAfterTileSetsLoaded()
         {
             // Generate Materials for Map batching
-            List<Material> materials = new List<Material>();
+            materials = new List<Material>();
             // Generate Materials
             int i = 0;
-            if (TileSets.Count > 1)
+
+            for (i = 0; i < TileSets.Count; i++)
             {
-                for (i = 0; i < TileSets.Count; i++)
+                Material layerMat = new Material(BaseTileMaterial);
+                layerMat.mainTexture = TileSets[i].Texture;
+                materials.Add(layerMat);
+                var ma = GameObject.FindObjectOfType(typeof(MaterialAnimation)) as MaterialAnimation;
+                if (ma != null)
                 {
-                    Material layerMat = new Material(BaseTileMaterial);
-                    layerMat.mainTexture = TileSets[i].Texture;
-                    materials.Add(layerMat);
+                    ma.animatedMaterials[i].material = layerMat;
                 }
-            } else {
-                BaseTileMaterial.mainTexture = TileSets[0].Texture;
-                materials.Add(BaseTileMaterial);
             }
 
 			Layers = new List<Layer>();
@@ -2705,6 +2715,20 @@ namespace X_UniTMX
                     gameObject.BroadcastMessage(menssage[0]);
                 }
                 c++;
+            }
+
+            if(obj.HasProperty(Property_HelpArrow)) {
+                var pc = gameObject.GetComponent<PlayerController>();
+                pc.showCorpseHelp = true;
+            }
+
+            if(obj.HasProperty(Property_NextLevel)) {
+                var pc = gameObject.AddComponent<NextLevel>();
+                pc.nextLevel = obj.GetPropertyAsString(Property_NextLevel);
+            }
+
+            if(obj.HasProperty("size")) {
+                gameObject.transform.localScale = Vector3.one * obj.GetPropertyAsFloat("size") / 3;
             }
 
             if (gameObject.renderer != null)

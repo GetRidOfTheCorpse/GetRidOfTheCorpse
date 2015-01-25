@@ -43,8 +43,11 @@ TextureImporter:
     21300076: guard_right_1
     21300078: guard_right_2
     21300080: guard_right_3
-    21300082: arrow
+    21300082: arrow_left
     21300084: bubble
+    21300086: arrow_right
+    21300088: key
+    21300090: block
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -213,8 +216,8 @@ TextureImporter:
         y: 640
         width: 128
         height: 256
-      alignment: 9
-      pivot: {x: .5, y: .75}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: corpse_down
       rect:
@@ -223,8 +226,8 @@ TextureImporter:
         y: 640
         width: 128
         height: 256
-      alignment: 9
-      pivot: {x: .5, y: .25}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: corpse_right
       rect:
@@ -233,8 +236,8 @@ TextureImporter:
         y: 512
         width: 256
         height: 128
-      alignment: 9
-      pivot: {x: .649999976, y: .5}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: corpse_left
       rect:
@@ -243,8 +246,8 @@ TextureImporter:
         y: 511
         width: 256
         height: 128
-      alignment: 9
-      pivot: {x: .349999994, y: .5}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: down_corpse_1
       rect:
@@ -333,8 +336,8 @@ TextureImporter:
         y: 1152
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .25, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: right_corpse_1
       rect:
@@ -343,8 +346,8 @@ TextureImporter:
         y: 896
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .75, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: right_corpse_2
       rect:
@@ -353,8 +356,8 @@ TextureImporter:
         y: 896
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .75, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: right_corpse_3
       rect:
@@ -363,8 +366,8 @@ TextureImporter:
         y: 896
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .75, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: guard_down_1
       rect:
@@ -486,7 +489,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: .5, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: arrow
+    - name: arrow_left
       rect:
         serializedVersion: 2
         x: 895
@@ -505,6 +508,36 @@ TextureImporter:
         height: 106
       alignment: 7
       pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: arrow_right
+      rect:
+        serializedVersion: 2
+        x: 897
+        y: 515
+        width: 128
+        height: 124
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: key
+      rect:
+        serializedVersion: 2
+        x: 1421
+        y: 641
+        width: 100
+        height: 122
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: block
+      rect:
+        serializedVersion: 2
+        x: 1543
+        y: 388
+        width: 374
+        height: 373
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

@@ -96,6 +96,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4803bfb252f986b40806309c71aad07b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationControllers:
+  - {fileID: 9100000, guid: 184f5677edaf0d649b754bc81b2fec9a, type: 2}
+  - {fileID: 9100000, guid: 16e22030d72b2a44cb5580fde5877ea8, type: 2}
   pickupdist: 1
 --- !u!212 &21227958
 SpriteRenderer:
