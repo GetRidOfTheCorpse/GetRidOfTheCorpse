@@ -2717,9 +2717,10 @@ namespace X_UniTMX
                 c++;
             }
 
-            if(obj.HasProperty(Property_HelpArrow)) {
-                var pc = gameObject.GetComponent<PlayerController>();
-                pc.showCorpseHelp = true;
+            if(obj.HasProperty("set help text")) {
+                Debug.Log(gameObject);
+                var ar = gameObject.GetComponent<Arrow>();
+                ar.SetHelpText(obj.GetPropertyAsString("set help text"));
             }
 
             if(obj.HasProperty(Property_NextLevel)) {

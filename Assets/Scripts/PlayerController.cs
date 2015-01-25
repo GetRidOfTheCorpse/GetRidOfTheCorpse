@@ -215,27 +215,4 @@ public class PlayerController : MonoBehaviour
             SoundManager.Instance.OneShot(SoundEffect.Decollect, gameObject);
         }
     }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Arrow"))
-        {
-            var sprite = other.GetComponent<SpriteRenderer>();
-
-            StartCoroutine(FadeOutArrow(sprite));
-        }
-    }
-
-    IEnumerator FadeOutArrow(SpriteRenderer arrow)
-    {
-        while (arrow.color.a > 0)
-        {
-            var color = arrow.color;
-            color.a -= Time.deltaTime * 2;
-            arrow.color = color;
-            yield return null;
-        }
-
-        Destroy(arrow.gameObject);
-    }
 }
