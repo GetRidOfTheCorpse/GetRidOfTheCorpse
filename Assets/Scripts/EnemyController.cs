@@ -30,6 +30,7 @@ public class EnemyController : MonoBehaviour
     private float threshold = 0.5f;
 
     private Vector3 lookDirection;
+    private Quaternion initialRotation;
     private Transform viewConeTransform;
 
     void Start()
@@ -42,6 +43,7 @@ public class EnemyController : MonoBehaviour
         spriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
         spriteRenderer.color = Color.white;
 
+        initialRotation = this.transform.rotation;
 
         viewConeTransform = transform.GetChild(0);
         viewConeTransform.localScale = new Vector3((coneAngle / 13f), coneLength * 0.4f, 1);
@@ -117,7 +119,8 @@ public class EnemyController : MonoBehaviour
 
             direction = this.transform.position - previousPosition;
 
-            lookDirection = -direction;
+            lookDirection = direction.magnitude == 0 ? initialRotation * this.transform.up : direction;
+            lookDirection *= -1;
             lookDirection.Normalize();
 
             viewConeTransform.rotation = Quaternion.FromToRotation(Vector3.up, lookDirection * -coneLength);
@@ -147,7 +150,6 @@ public class EnemyController : MonoBehaviour
     private void ViewConePlayerIntersection()
     {
         Vector3 toPlayer = player.transform.position - this.transform.position;
-
 
         Debug.DrawRay(transform.position, lookDirection * -coneLength, Color.red);
 
