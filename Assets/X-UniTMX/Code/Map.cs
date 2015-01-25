@@ -822,17 +822,12 @@ namespace X_UniTMX
             List<Material> materials = new List<Material>();
             // Generate Materials
             int i = 0;
-            if (TileSets.Count > 1)
+
+            for (i = 0; i < TileSets.Count; i++)
             {
-                for (i = 0; i < TileSets.Count; i++)
-                {
-                    Material layerMat = new Material(BaseTileMaterial);
-                    layerMat.mainTexture = TileSets[i].Texture;
-                    materials.Add(layerMat);
-                }
-            } else {
-                BaseTileMaterial.mainTexture = TileSets[0].Texture;
-                materials.Add(BaseTileMaterial);
+                Material layerMat = new Material(BaseTileMaterial);
+                layerMat.mainTexture = TileSets[i].Texture;
+                materials.Add(layerMat);
             }
 
 			Layers = new List<Layer>();
