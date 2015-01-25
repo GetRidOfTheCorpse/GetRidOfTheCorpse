@@ -183,6 +183,7 @@ public class EnemyController : MonoBehaviour
         {
             bubbleTime = 0;
             previouseCharacterDetected = false;
+            bubble.enabled = false;
         }
 
         if (bubbleTime > bubbleTimeOut)
