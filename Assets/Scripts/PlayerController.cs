@@ -3,6 +3,14 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+    private static PlayerController instance;
+
+    public static PlayerController Instance
+    {
+        get { return instance; }
+    }
+
+
     public float CharacterSpeed = 6f;
     public RuntimeAnimatorController[] animationControllers;
 
@@ -28,6 +36,10 @@ public class PlayerController : MonoBehaviour
 
     public bool HasKey() {
         return lastKey != null;
+    }
+
+    void Awake() {
+        instance = this;
     }
 
     // Use this for initialization
@@ -206,7 +218,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void GotYou() {
+    public void GotYou(bool body = false) {
+        if(body || HasBody()) {
+            enabled = false;
+            rigidbody2D.velocity = Vector2.zero;
+            animator.SetBool("Moving", false);
+            var fuckSign = transform.FindChild("FUCK").GetComponent<SpriteRenderer>();
+            fuckSign.enabled = true;
+            MainCanvas.Instance.FadeOut(() => Application.LoadLevel("LoseScreen"), 2);
+            return;
+        }
         if (HasKey())
         {
             lastKey.SetActive(true);
