@@ -549,6 +549,7 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Priority: 3
   ignoreReversedGraphics: 1
   blockingObjects: 0
   m_BlockingMask:
@@ -630,4 +631,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2291e704a61a204ca86955f62ab8cb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextLevel: level_001
+  nextLevel: level_000
