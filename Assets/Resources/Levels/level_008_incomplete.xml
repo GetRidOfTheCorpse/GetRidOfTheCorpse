@@ -941,7 +941,7 @@
   </object>
   <object id="167" name="DoorOut" type="Trigger" x="6240" y="2848" width="192" height="224">
    <properties>
-    <property name="next level" value="level_009"/>
+    <property name="next level" value="WinScreen"/>
    </properties>
   </object>
   <object id="168" name="DoorIn" type="Trigger" x="3392" y="8960" width="256" height="320"/>

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
@@ -166,6 +166,11 @@ public class EnemyController : MonoBehaviour
     {
         characterDetected = detectedCharacters.Count > 0;
 
+        if (detectedCharacters.Contains(deadBody))
+        {
+            PlayerController.Instance.GotYou(true);
+        }
+
         if (detectedCharacters.Contains(player))
         {
             if (!previouseCharacterDetected && characterDetected)
@@ -173,10 +178,7 @@ public class EnemyController : MonoBehaviour
                 SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
                 previouseCharacterDetected = characterDetected;
             }
-            if (detectedCharacters.Contains(deadBody))
-            {
-                PlayerController.Instance.GotYou(true);
-            }
+
 
             bubble.enabled = true;
         }
