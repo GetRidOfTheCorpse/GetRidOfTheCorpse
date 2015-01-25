@@ -283,6 +283,10 @@ namespace X_UniTMX
 		/// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
 		/// </summary>
 		public const string Property_SendMessage = "send message";
+        /// <summary>
+        /// Custom Property for Colliders defining to send a message to all scripts attached to the collider's GameObject
+        /// </summary>
+        public const string Property_HelpArrow = "show help arrow";
 		#endregion
 
 		#region Constructors
@@ -2705,6 +2709,11 @@ namespace X_UniTMX
                     gameObject.BroadcastMessage(menssage[0]);
                 }
                 c++;
+            }
+
+            if(obj.HasProperty(Property_HelpArrow)) {
+                var pc = gameObject.GetComponent<PlayerController>();
+                pc.showCorpseHelp = true;
             }
 
             if (gameObject.renderer != null)

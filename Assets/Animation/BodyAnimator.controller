@@ -11,7 +11,7 @@ AnimatorController:
   - m_Name: Direction
     m_Type: 3
     m_DefaultFloat: 0
-    m_DefaultInt: 0
+    m_DefaultInt: 2
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
@@ -333,7 +333,7 @@ StateMachine:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Base Layer
-  m_DefaultState: {fileID: 110281196}
+  m_DefaultState: {fileID: 110208784}
   m_States:
   - {fileID: 110281196}
   - {fileID: 110224440}
@@ -343,17 +343,11 @@ StateMachine:
   m_ChildStateMachinePosition: []
   m_OrderedTransitions:
     data:
-      first: {fileID: 110208784}
+      first: {fileID: 110281196}
       second:
-      - {fileID: 110115936}
-      - {fileID: 110186322}
-      - {fileID: 110134068}
-    data:
-      first: {fileID: 110280100}
-      second:
-      - {fileID: 110142562}
-      - {fileID: 110106830}
-      - {fileID: 110163174}
+      - {fileID: 110104540}
+      - {fileID: 110146814}
+      - {fileID: 110178286}
     data:
       first: {fileID: 110224440}
       second:
@@ -361,11 +355,17 @@ StateMachine:
       - {fileID: 110114100}
       - {fileID: 110127860}
     data:
-      first: {fileID: 110281196}
+      first: {fileID: 110280100}
       second:
-      - {fileID: 110104540}
-      - {fileID: 110146814}
-      - {fileID: 110178286}
+      - {fileID: 110142562}
+      - {fileID: 110106830}
+      - {fileID: 110163174}
+    data:
+      first: {fileID: 110208784}
+      second:
+      - {fileID: 110115936}
+      - {fileID: 110186322}
+      - {fileID: 110134068}
   m_MotionSetCount: 1
   m_AnyStatePosition: {x: 24, y: -240, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
