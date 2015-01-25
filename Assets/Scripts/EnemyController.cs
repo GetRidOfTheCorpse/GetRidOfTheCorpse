@@ -107,7 +107,6 @@ public class EnemyController : MonoBehaviour
                 if (!isStatic)
                     animator.SetBool("Moving", true);
             }
-
             else if (Mathf.Abs(direction.x) > threshold)
             {
 
@@ -153,10 +152,8 @@ public class EnemyController : MonoBehaviour
 
             if (endPoint == points.Length - 1 && isRing)
                 endPoint = 0;
-
             else if (endPoint == points.Length - 1 && !isRing)
                 iterator = -1;
-
             else if (endPoint == 0)
                 iterator = 1;
 
@@ -175,7 +172,10 @@ public class EnemyController : MonoBehaviour
             {
                 SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
                 previouseCharacterDetected = characterDetected;
-            PlayerController.Instance.GotYou(true);
+            }
+            if (detectedCharacters.Contains(deadBody))
+            {
+                PlayerController.Instance.GotYou(true);
             }
 
             bubble.enabled = true;
@@ -217,7 +217,7 @@ public class EnemyController : MonoBehaviour
             if (coneArea.magnitude < coneAngle / 45f && lookingTowardsPlayer)
             {
                 detectedCharacters.Add(character);
-                character.SendMessage("GotYou", SendMessageOptions.DontRequireReceiver);
+                PlayerController.Instance.GotYou();
             }
 
         }
