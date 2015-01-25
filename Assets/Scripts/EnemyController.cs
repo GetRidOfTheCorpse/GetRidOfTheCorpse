@@ -23,9 +23,15 @@ public class EnemyController : MonoBehaviour
     private float speedMultiplier = 0.1f;
 
     private GameObject player;
-    private bool playerDetected;
+    private bool characterDetected;
 
-    private SpriteRenderer spriteRenderer;
+    private GameObject deadBody;
+    private List<GameObject> detectedCharacters;
+    private SpriteRenderer bubble;
+    private float bubbleTime;
+    private float bubbleTimeOut = 0.5f;
+
+    private SpriteRenderer ownSpriteRenderer;
     private Animator animator;
     private Vector3 direction = Vector3.zero;
     private float threshold = 0.5f;
@@ -38,11 +44,13 @@ public class EnemyController : MonoBehaviour
     {
         PathToPoints();
         player = GameObject.FindGameObjectWithTag("Player");
+        deadBody = GameObject.FindGameObjectWithTag("Body");
+        bubble = (SpriteRenderer)transform.FindChild("bubble").GetComponent("SpriteRenderer");
         animator = (Animator)GetComponent("Animator");
         animator.speed = 0.5f;
 
-        spriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
-        spriteRenderer.color = Color.white;
+        ownSpriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
+        ownSpriteRenderer.color = Color.white;
 
         initialRotation = this.transform.rotation;
 
@@ -57,8 +65,12 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
+        detectedCharacters = new List<GameObject>();
+
         UpdatePositionAndRotation();
-        ViewConePlayerIntersection();
+        ViewConeCharacterIntersection(player);
+        ViewConeCharacterIntersection(deadBody);
+        HandleDetectedCharacters();
         UpdateAnimation();
     }
 
@@ -67,7 +79,7 @@ public class EnemyController : MonoBehaviour
         direction = viewConeTransform.up;
         direction.Normalize();
 
-        if (playerDetected)
+        if (characterDetected)
         {
             animator.SetBool("Moving", false);
         }
@@ -115,7 +127,7 @@ public class EnemyController : MonoBehaviour
 
         float distance = (endPosition - startPosition).magnitude;
 
-        if (!playerDetected)
+        if (!characterDetected)
         {
             Vector3 previousPosition = this.transform.position;
 
@@ -152,9 +164,33 @@ public class EnemyController : MonoBehaviour
 
     }
 
-    private void ViewConePlayerIntersection()
+    private void HandleDetectedCharacters()
     {
-        Vector3 toPlayer = player.transform.position - this.transform.position;
+        characterDetected = detectedCharacters.Count > 0;
+
+        if (detectedCharacters.Contains(deadBody))
+        {
+            Application.LoadLevel("LoseScreen");
+        }
+        else if (detectedCharacters.Contains(player))
+        {
+            if (bubbleTime < bubbleTimeOut)
+            {
+                bubbleTime += Time.fixedDeltaTime;
+                bubble.enabled = true;
+            }
+            else bubble.enabled = false;
+        }
+        else bubbleTime = 0;
+
+
+
+
+    }
+
+    private void ViewConeCharacterIntersection(GameObject character)
+    {
+        Vector3 toCharacter = character.transform.position - this.transform.position;
 
         Debug.DrawRay(transform.position, lookDirection * -coneLength, Color.red);
 
@@ -162,25 +198,21 @@ public class EnemyController : MonoBehaviour
         Debug.DrawRay(transform.position, Quaternion.AngleAxis(coneAngle, Vector3.forward) * lookDirection * -coneLength, Color.blue);
 
 
-        if (toPlayer.magnitude < coneLength)
+        if (toCharacter.magnitude < coneLength)
         {
-            toPlayer.Normalize();
+            toCharacter.Normalize();
 
-            Vector3 coneArea = Vector3.Cross(lookDirection, toPlayer);
-            bool lookingTowardsPlayer = toPlayer.magnitude > (toPlayer + lookDirection).magnitude;
+            Vector3 coneArea = Vector3.Cross(lookDirection, toCharacter);
+            bool lookingTowardsPlayer = toCharacter.magnitude > (toCharacter + lookDirection).magnitude;
 
             if (coneArea.magnitude < coneAngle / 45f && lookingTowardsPlayer)
             {
-                if (!playerDetected)
-                {
-                    SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
-                }
-                playerDetected = true;
+                detectedCharacters.Add(character);
+                character.SendMessage("GotYou", SendMessageOptions.DontRequireReceiver);
+
             }
-            else playerDetected = false;
 
         }
-        else playerDetected = false;
 
     }
 
