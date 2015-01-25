@@ -333,8 +333,8 @@ TextureImporter:
         y: 1152
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .25, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: right_corpse_1
       rect:
@@ -343,8 +343,8 @@ TextureImporter:
         y: 896
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .75, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: right_corpse_2
       rect:
@@ -353,8 +353,8 @@ TextureImporter:
         y: 896
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .75, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: right_corpse_3
       rect:
@@ -363,8 +363,8 @@ TextureImporter:
         y: 896
         width: 256
         height: 256
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 9
+      pivot: {x: .75, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: guard_down_1
       rect:
