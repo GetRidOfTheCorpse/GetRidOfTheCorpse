@@ -299,7 +299,7 @@
     <property name="set material color" value="255,0,0,255"/>
    </properties>
   </object>
-  <object id="52" name="Guard" type="NoCollider" x="2624" y="1977" rotation="320">
+  <object id="52" name="Guard" type="NoCollider" x="2624" y="1977" rotation="270">
    <properties>
     <property name="0-prefab" value="Guard"/>
     <property name="0-prefab path" value="Prefabs/"/>
@@ -314,7 +314,11 @@
     <property name="tag" value="Bookshelf"/>
    </properties>
   </object>
-  <object id="47" name="DoorOut" type="Trigger" x="2355" y="214" width="288" height="160"/>
+  <object id="47" name="DoorOut" type="Trigger" x="2355" y="214" width="288" height="160">
+   <properties>
+    <property name="next level" value="level_004"/>
+   </properties>
+  </object>
   <object id="48" name="YouShallNotPass" type="Collider" x="2362" y="85" width="256" height="160"/>
   <object id="49" name="YouShallNotGoBack" type="Collider" x="442" y="3477" width="256" height="128"/>
   <object id="53" name="Key" type="Trigger" x="1600" y="1088">

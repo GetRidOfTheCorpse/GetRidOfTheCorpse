@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
-    public float CharacterSpeed = 7.5f;
+    public float CharacterSpeed = 6f;
     public RuntimeAnimatorController[] animationControllers;
 
     private GameObject body;
@@ -21,6 +21,10 @@ public class PlayerController : MonoBehaviour
 
     private bool hasKey = false;
 
+    public bool HasBody() {
+        return body != null;
+    }
+
     // Use this for initialization
 	void Start () {
         myTransform = (Transform)GetComponent("Transform");
@@ -32,14 +36,14 @@ public class PlayerController : MonoBehaviour
     {
         Rigidbody2D rigidBody = (Rigidbody2D)GetComponent("Rigidbody2D");
 
-        if (Input.GetKey("up"))
+        if (Input.GetAxisRaw("Vertical") > 0)
         {
             ym = 1;
             xm = 0;
             animator.SetInteger("Direction", 2);
             animator.SetBool("Moving", true);
         }
-        else if (Input.GetKey("down"))
+        else if (Input.GetAxisRaw("Vertical") < 0)
         {
             ym = -1;
             xm = 0;
@@ -50,14 +54,14 @@ public class PlayerController : MonoBehaviour
         else
         {
             ym = 0;
-            if (Input.GetKey("left"))
+            if (Input.GetAxisRaw("Horizontal") < 0)
             {
                 xm = -1;
                 animator.SetInteger("Direction", 1);
                 animator.SetBool("Moving", true);
 
             }
-            else if (Input.GetKey("right"))
+            else if (Input.GetAxisRaw("Horizontal") > 0)
             {
                 xm = +1;
                 animator.SetInteger("Direction", 3);
@@ -85,9 +89,10 @@ public class PlayerController : MonoBehaviour
                 if (magn < pickupdist)
                 {
 
-                    if (Input.GetKeyDown("space"))
+                    if (Input.GetButtonDown("Jump"))
                     {
                         body = obj[i];
+                        SoundManager.Instance.OneShot(SoundEffect.PickUpLine, body);
                         animator.runtimeAnimatorController = animationControllers[1];
 
                     }
@@ -111,8 +116,9 @@ public class PlayerController : MonoBehaviour
         else if (body != null)
         {
             //GameObject.Destroy(gameObject.GetComponent("DistanceJoint2D"));
-            if (Input.GetKeyUp("space"))
+            if (Input.GetButtonUp("Jump"))
             {
+                SoundManager.Instance.OneShot(SoundEffect.DropLine, body);
                 body = null;
                 MainCanvas.Instance.HideHelpText(HelpText.ActionToDropCorpse);
             } else {
@@ -122,7 +128,7 @@ public class PlayerController : MonoBehaviour
 
         movDirection = new Vector2(xm, ym);
         //myTransform.rotation = Quaternion.Euler(0, 0, rot);
-        movDirection *= CharacterSpeed;
+        movDirection *= CharacterSpeed * (HasBody() ? 0.675f : 1);
 
         if (body != null)
         {
@@ -178,11 +184,13 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.CompareTag("Key")) 
         {
+            SoundManager.Instance.OneShot(SoundEffect.Collect, gameObject);
             hasKey = true;
             Destroy(other.gameObject);
         }
         else if (other.CompareTag("Block") && hasKey) 
         {
+            SoundManager.Instance.OneShot(SoundEffect.Decollect, gameObject);
             Destroy(other.gameObject);
         }
     }

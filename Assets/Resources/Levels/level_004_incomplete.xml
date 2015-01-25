@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="33" tilewidth="128" tileheight="128" nextobjectid="67">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="33" tilewidth="128" tileheight="128" nextobjectid="71">
  <tileset firstgid="1" source="Sprites/struct1.xml"/>
  <tileset firstgid="257" source="Sprites/struct2.xml"/>
  <layer name="Ground" width="24" height="33">
@@ -309,24 +309,13 @@
     <property name="layer name" value="PlayerLayer"/>
    </properties>
   </object>
-  <object id="36" name="BodySpawn" type="NoCollider" x="917.7" y="3768.36" rotation="45">
+  <object id="36" name="BodySpawn" type="NoCollider" x="917.7" y="3768.36">
    <properties>
     <property name="0-prefab" value="Body"/>
     <property name="0-prefab path" value="Prefabs/"/>
     <property name="layer name" value="BodyLayer"/>
    </properties>
   </object>
- </objectgroup>
- <objectgroup name="GameLogic">
-  <object id="45" name="DoorIn" type="Trigger" x="1056" y="3552" width="160" height="320"/>
-  <object id="46" name="Bookshelf" type="Trigger" x="256" y="768" width="384" height="352">
-   <properties>
-    <property name="tag" value="Bookshelf"/>
-   </properties>
-  </object>
-  <object id="47" name="DoorOut" type="Trigger" x="2464" y="384" width="160" height="288"/>
-  <object id="48" name="YouShallNotPass" type="Collider" x="2624" y="288" width="160" height="320"/>
-  <object id="49" name="YouShallNotGoBack" type="Collider" x="1216" y="3552" width="128" height="320"/>
   <object id="50" name="Guard02" type="NoCollider" x="448" y="1305" rotation="180">
    <properties>
     <property name="0-prefab" value="Guard"/>
@@ -386,6 +375,34 @@
   </object>
   <object id="66" name="Guard01Path" type="Trigger" x="2144" y="3328">
    <polyline points="0,0 576,0 576,-384"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="GameLogic">
+  <object id="45" name="DoorIn" type="Trigger" x="1056" y="3552" width="160" height="320"/>
+  <object id="46" name="Bookshelf" type="Trigger" x="256" y="768" width="384" height="352">
+   <properties>
+    <property name="tag" value="Bookshelf"/>
+   </properties>
+  </object>
+  <object id="47" name="DoorOut" type="Trigger" x="2464" y="384" width="160" height="288">
+   <properties>
+    <property name="next level" value="level_005"/>
+   </properties>
+  </object>
+  <object id="48" name="YouShallNotPass" type="Collider" x="2624" y="288" width="160" height="320"/>
+  <object id="49" name="YouShallNotGoBack" type="Collider" x="1216" y="3552" width="128" height="320"/>
+  <object id="68" name="Key" type="NoCollider" x="1632" y="2848">
+   <properties>
+    <property name="0-prefab" value="Key"/>
+    <property name="0-prefab path" value="Prefabs/"/>
+   </properties>
+  </object>
+  <object id="70" name="Block" type="NoCollider" x="1600" y="1376">
+   <properties>
+    <property name="0-prefab" value="Block"/>
+    <property name="0-prefab path" value="Prefabs/"/>
+    <property name="size" value="2"/>
+   </properties>
   </object>
  </objectgroup>
 </map>
