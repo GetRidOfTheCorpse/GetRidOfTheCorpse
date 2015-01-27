@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 public class EnemyController : MonoBehaviour
 {
@@ -9,15 +10,16 @@ public class EnemyController : MonoBehaviour
     public float coneAngle = 11;
     public float coneLength = 5;
 
+    //WalkPath Vars
     private Vector3[] points;
-
+    private MovementPattern movementPattern = new MovementPattern();
     private int startPoint;
     private int endPoint;
     private int iterator = 1;
     private bool isRing;
     private bool isStatic;
-
     private float longestDistance = float.MinValue;
+
 
     private float lerpTime;
     private float speedMultiplier = 0.1f;
@@ -43,7 +45,6 @@ public class EnemyController : MonoBehaviour
 
     void Start()
     {
-        PathToPoints();
         player = GameObject.FindGameObjectWithTag("Player");
         deadBody = GameObject.FindGameObjectWithTag("Body");
         bubble = (SpriteRenderer)transform.FindChild("bubble").GetComponent("SpriteRenderer");
@@ -62,6 +63,8 @@ public class EnemyController : MonoBehaviour
         this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg - 90);
 
         detectedCharacters = new List<GameObject>();
+
+        PathToPoints();
     }
 
     void FixedUpdate()
@@ -73,6 +76,8 @@ public class EnemyController : MonoBehaviour
         ViewConeCharacterIntersection(deadBody);
         HandleDetectedCharacters();
         UpdateAnimation();
+
+        movementPattern.DrawPattern();
     }
 
     private void UpdateAnimation()
@@ -234,37 +239,47 @@ public class EnemyController : MonoBehaviour
 
         Transform pathNode = transform.parent.Find(pathName);
 
+
+
         if (pathNode != null)
         {
             EdgeCollider2D path = pathNode.GetComponent<EdgeCollider2D>();
+            Vector2 pathStartPosition = pathNode.position;
 
             points = new Vector3[path.points.Length];
-            int i = 0;
 
-            foreach (Vector2 point in path.points)
+
+            for (int i = 0; i < path.points.Length; i++)
             {
-                points[i++] = pathNode.position + new Vector3(point.x, point.y);
-                Debug.DrawRay(pathNode.position + new Vector3(point.x, point.y), Vector3.up, Color.red, 10);
+                Vector2 pathPointPosition = path.points[i];
+
+                points[i] = pathNode.position + new Vector3(pathPointPosition.x, pathPointPosition.y);
+                Debug.DrawRay(pathNode.position + new Vector3(pathPointPosition.x, pathPointPosition.y), Vector3.up, Color.red, 10);
+
             }
+
+
+
+
+            movementPattern.CreatePattern(pathNode.position, path.points);
+
+
 
             pathNode.gameObject.SetActive(false);
 
-            if ((points[points.Length - 1] - points[0]).magnitude < 1)
-            {
-                points[points.Length - 1] = points[0];
-                isRing = true;
-            }
 
             GetNearestPoint();
             GetNearestLerpStartPosition();
             CalculateLongestDistance();
+
         }
         else
         {
             //Debug.LogWarning("Path for " + name + " " + pathName + " not found!");
 
-            points = new Vector3[] { this.transform.position, this.transform.position };
-            isStatic = true;
+
+            movementPattern.CreateStaticPosition();
+
         }
 
 
@@ -328,4 +343,118 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+
+
+    private class MovementPattern
+    {
+        private WayPoint[] wayPoints;
+
+        private float completeDistance;
+        private float longestSegmentDistance;
+
+        private bool isRing;
+        private bool isStatic;
+
+        public Vector2 UpdatePosition(Vector2 position)
+        {
+
+            return new Vector2();
+        }
+
+        public void DrawPattern()
+        {
+            foreach (WayPoint wayPoint in wayPoints)
+            {
+                Debug.DrawRay(wayPoint.Position, wayPoint.Next.Position - wayPoint.Position, Color.green);
+            }
+        }
+
+        public void CreateStaticPosition()
+        {
+            isStatic = true;
+        }
+
+        public void CreatePattern(Vector2 startPosition, Vector2[] pathPoints)
+        {
+            InitializeWayPoints(startPosition, pathPoints);
+            LinkWayPoints();
+            CalculateDistances();
+        }
+
+        private void InitializeWayPoints(Vector2 startPosition, Vector2[] pathPoints)
+        {
+            wayPoints = new WayPoint[pathPoints.Length];
+
+            for (int i = 0; i < wayPoints.Length; i++)
+            {
+                wayPoints[i] = new WayPoint();
+                wayPoints[i].Position = startPosition + pathPoints[i];
+            }
+
+            if ((wayPoints[wayPoints.Length - 1].Position - wayPoints[0].Position).magnitude < 0.5f)
+            {
+                Array.Copy(wayPoints, wayPoints, wayPoints.Length - 1);
+                isRing = true;
+            }
+        }
+
+        private void LinkWayPoints()
+        {
+            for (int i = 0; i < wayPoints.Length; i++)
+            {
+                if (i + 1 == wayPoints.Length)
+                {
+                    if (isRing)
+                        wayPoints[i].Next = wayPoints[0];
+                    else
+                        wayPoints[i].Next = wayPoints[i - 1];
+                }
+                else
+                    wayPoints[i].Next = wayPoints[i + 1];
+
+
+                if (i - 1 < 0)
+                {
+                    if (isRing)
+                        wayPoints[i].Prev = wayPoints[wayPoints.Length - 1];
+                    else
+                        wayPoints[i].Prev = wayPoints[i + 1];
+                }
+                else
+                    wayPoints[i].Prev = wayPoints[i - 1];
+            }
+        }
+
+        private void CalculateDistances()
+        {
+            foreach (WayPoint wayPoint in wayPoints)
+            {
+                wayPoint.ToNextDistance = (wayPoint.Next.Position - wayPoint.Position).magnitude;
+                wayPoint.ToPrevDistance = (wayPoint.Prev.Position - wayPoint.Position).magnitude;
+
+                longestSegmentDistance = wayPoint.ToNextDistance > longestSegmentDistance
+                                       ? wayPoint.ToNextDistance
+                                       : longestSegmentDistance;
+
+                completeDistance += wayPoint.ToPrevDistance;
+                wayPoint.DistanceFromStart = completeDistance;
+            }
+
+            completeDistance -= wayPoints[0].ToPrevDistance;
+            wayPoints[0].DistanceFromStart = 0;
+        }
+
+
+    }
+    private class WayPoint
+    {
+        public WayPoint Next;
+        public WayPoint Prev;
+
+        public Vector2 Position;
+
+        public float DistanceFromStart;
+        public float ToNextDistance;
+        public float ToPrevDistance;
+    }
 }
