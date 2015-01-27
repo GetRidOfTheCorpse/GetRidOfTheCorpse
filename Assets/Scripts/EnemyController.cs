@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.IO;
 
 public class EnemyController : MonoBehaviour
 {
@@ -126,44 +127,48 @@ public class EnemyController : MonoBehaviour
 
     private void UpdatePositionAndRotation()
     {
+        movementPattern.UpdateGuard(Time.fixedDeltaTime);
 
-        Vector3 startPosition = points[startPoint];
-        Vector3 endPosition = points[endPoint];
+        transform.position = movementPattern.GetPosition();
+        viewConeTransform.rotation = movementPattern.GetDirection();
 
-        float distance = (endPosition - startPosition).magnitude;
+        //Vector3 startPosition = points[startPoint];
+        //Vector3 endPosition = points[endPoint];
 
-        if (!characterDetected)
-        {
-            Vector3 previousPosition = this.transform.position;
+        //float distance = (endPosition - startPosition).magnitude;
 
-            this.transform.position = Vector3.Lerp(points[startPoint], points[endPoint], lerpTime);
+        //if (!characterDetected)
+        //{
+        //    Vector3 previousPosition = this.transform.position;
 
-            direction = this.transform.position - previousPosition;
+        //    this.transform.position = Vector3.Lerp(points[startPoint], points[endPoint], lerpTime);
 
-            lookDirection = direction.magnitude == 0 ? initialRotation * this.transform.up : direction;
-            lookDirection *= -1;
-            lookDirection.Normalize();
+        //    direction = this.transform.position - previousPosition;
 
-            viewConeTransform.rotation = Quaternion.FromToRotation(Vector3.up, lookDirection * -coneLength);
+        //    lookDirection = direction.magnitude == 0 ? initialRotation * this.transform.up : direction;
+        //    lookDirection *= -1;
+        //    lookDirection.Normalize();
 
-            lerpTime += Time.fixedDeltaTime * (10 / distance) * WalkSpeed * speedMultiplier;
-        }
+        //    viewConeTransform.rotation = Quaternion.FromToRotation(Vector3.up, lookDirection * -coneLength);
+
+        //    lerpTime += Time.fixedDeltaTime * (10 / distance) * WalkSpeed * speedMultiplier;
+        //}
 
 
-        if (lerpTime > 1)
-        {
-            lerpTime -= 1;
-            startPoint = endPoint;
+        //if (lerpTime > 1)
+        //{
+        //    lerpTime -= 1;
+        //    startPoint = endPoint;
 
-            if (endPoint == points.Length - 1 && isRing)
-                endPoint = 0;
-            else if (endPoint == points.Length - 1 && !isRing)
-                iterator = -1;
-            else if (endPoint == 0)
-                iterator = 1;
+        //    if (endPoint == points.Length - 1 && isRing)
+        //        endPoint = 0;
+        //    else if (endPoint == points.Length - 1 && !isRing)
+        //        iterator = -1;
+        //    else if (endPoint == 0)
+        //        iterator = 1;
 
-            endPoint += iterator;
-        }
+        //    endPoint += iterator;
+        //}
 
     }
 
@@ -239,170 +244,129 @@ public class EnemyController : MonoBehaviour
 
         Transform pathNode = transform.parent.Find(pathName);
 
-
-
         if (pathNode != null)
         {
             EdgeCollider2D path = pathNode.GetComponent<EdgeCollider2D>();
-            Vector2 pathStartPosition = pathNode.position;
 
-            points = new Vector3[path.points.Length];
-
-
-            for (int i = 0; i < path.points.Length; i++)
-            {
-                Vector2 pathPointPosition = path.points[i];
-
-                points[i] = pathNode.position + new Vector3(pathPointPosition.x, pathPointPosition.y);
-                Debug.DrawRay(pathNode.position + new Vector3(pathPointPosition.x, pathPointPosition.y), Vector3.up, Color.red, 10);
-
-            }
-
-
-
-
-            movementPattern.CreatePattern(pathNode.position, path.points);
-
-
+            Debug.Log(name[name.Length - 1] + ":");
+            movementPattern.CreatePattern(transform, pathNode.position, path.points);
 
             pathNode.gameObject.SetActive(false);
-
-
-            GetNearestPoint();
-            GetNearestLerpStartPosition();
-            CalculateLongestDistance();
-
         }
         else
         {
             //Debug.LogWarning("Path for " + name + " " + pathName + " not found!");
-
-
-            movementPattern.CreateStaticPosition();
-
-        }
-
-
-    }
-
-    private void GetNearestPoint()
-    {
-        Dictionary<int, Vector3> sortedPositions = new Dictionary<int, Vector3>();
-
-        for (int i = 0; i < points.Length; i++)
-        {
-            sortedPositions.Add(i, points[i]);
-        }
-
-        sortedPositions = sortedPositions.OrderBy(item => (item.Value - this.transform.position).sqrMagnitude).ToDictionary(item => item.Key, item => item.Value);
-
-        startPoint = sortedPositions.ElementAt(0).Key;
-
-
-        int indexToPointBefore = startPoint - 1 < 0 ? points.Length - 2 : startPoint - 1;
-        int indexToPointAfter = startPoint + 1 > points.Length - 1 ? 1 : startPoint + 1;
-
-        float distanceToPointBefore = (this.transform.position - points[indexToPointBefore]).magnitude;
-        float distanceToPointAfter = (points[indexToPointAfter] - this.transform.position).magnitude;
-
-        float distanceStartToPointBefore = (points[indexToPointBefore] - points[startPoint]).magnitude;
-        float distanceStartToPointAfter = (points[indexToPointAfter] - points[startPoint]).magnitude;
-
-        //float distanceToStartPoint = (points[startPoint] - this.transform.position).magnitude;
-
-        if (distanceToPointBefore / distanceStartToPointBefore < distanceToPointAfter / distanceStartToPointAfter)
-            startPoint = indexToPointBefore;
-
-
-        if (startPoint == points.Length - 1 && !isRing)
-            iterator = -1;
-
-        if (startPoint == points.Length - 1 && isRing)
-            startPoint = 0;
-
-
-        endPoint = startPoint + iterator;
-
-
-    }
-
-    private void GetNearestLerpStartPosition()
-    {
-        float toStartPosition = (points[startPoint] - this.transform.position).magnitude;
-        float wholeDistance = (points[endPoint] - points[startPoint]).magnitude;
-
-        lerpTime = toStartPosition / wholeDistance;
-    }
-
-    private void CalculateLongestDistance()
-    {
-        for (int i = 0; i < points.Length - 1; i++)
-        {
-            float newDistance = (points[i + 1] - points[i]).magnitude;
-            longestDistance = longestDistance < newDistance ? newDistance : longestDistance;
+            movementPattern.CreateStaticPosition(transform);
         }
     }
+
+
+
 
 
 
     private class MovementPattern
     {
-        private WayPoint[] wayPoints;
+        private List<WayPoint> wayPoints;
 
-        private float completeDistance;
-        private float longestSegmentDistance;
+        private WayPoint lastWayPoint;
+
+        private Vector2 guardPosition;
+        private Quaternion guardRotation;
+
+        private float TotalDistance;
+
+        private float totalTime;
+        private float lerpTime;
 
         private bool isRing;
         private bool isStatic;
+        private bool goesForward = true;
 
-        public Vector2 UpdatePosition(Vector2 position)
+        public void UpdateGuard(float deltaTime)
         {
+            if (!isStatic)
+            {
+                lastWayPoint = goesForward ? lastWayPoint.Next : lastWayPoint.Prev;
 
-            return new Vector2();
+                lerpTime += deltaTime * 10 / lastWayPoint.ToNextDistance * 0.1f;
+
+                if (lerpTime > 1)
+                {
+                    lerpTime %= 1;
+
+                    if (wayPoints.First() == lastWayPoint)
+                        goesForward = false;
+
+                    else if (wayPoints.Last() == lastWayPoint)
+                        goesForward = true;
+
+                }
+            }
+        }
+
+        public Vector2 GetPosition()
+        {
+            if (!isStatic)
+                guardPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.Next.Position, lerpTime);
+            return guardPosition;
+        }
+
+        public Quaternion GetDirection()
+        {
+            if (!isStatic)
+                guardRotation = Quaternion.Euler(0, 0, 0);
+            return guardRotation;
         }
 
         public void DrawPattern()
         {
-            foreach (WayPoint wayPoint in wayPoints)
-            {
-                Debug.DrawRay(wayPoint.Position, wayPoint.Next.Position - wayPoint.Position, Color.green);
-            }
+            if (!isStatic)
+                foreach (WayPoint wayPoint in wayPoints)
+                {
+                    Debug.DrawRay(wayPoint.Position, wayPoint.Next.Position - wayPoint.Position, Color.green);
+                }
         }
 
-        public void CreateStaticPosition()
+        public void CreateStaticPosition(Transform guardTransform)
         {
+            guardPosition = guardTransform.position;
+            guardRotation = guardTransform.rotation;
             isStatic = true;
         }
 
-        public void CreatePattern(Vector2 startPosition, Vector2[] pathPoints)
+        public void CreatePattern(Transform guardTransform, Vector2 patternStartPosition, Vector2[] patternPositions)
         {
-            InitializeWayPoints(startPosition, pathPoints);
+            InitializeWayPoints(patternStartPosition, patternPositions);
             LinkWayPoints();
             CalculateDistances();
+
+            CalculateGuardStartPosition(guardTransform.position);
         }
 
-        private void InitializeWayPoints(Vector2 startPosition, Vector2[] pathPoints)
+        private void InitializeWayPoints(Vector2 patternStartPosition, Vector2[] patternPositions)
         {
-            wayPoints = new WayPoint[pathPoints.Length];
+            wayPoints = new List<WayPoint>();
 
-            for (int i = 0; i < wayPoints.Length; i++)
+            for (int i = 0; i < patternPositions.Length; i++)
             {
-                wayPoints[i] = new WayPoint();
-                wayPoints[i].Position = startPosition + pathPoints[i];
+                wayPoints.Add(new WayPoint());
+                wayPoints[i].Position = patternStartPosition + patternPositions[i];
+                wayPoints[i].index = i;
             }
 
-            if ((wayPoints[wayPoints.Length - 1].Position - wayPoints[0].Position).magnitude < 0.5f)
+            if ((wayPoints[wayPoints.Count - 1].Position - wayPoints[0].Position).magnitude < 0.5f)
             {
-                Array.Copy(wayPoints, wayPoints, wayPoints.Length - 1);
+                wayPoints.RemoveAt(wayPoints.Count - 1);
                 isRing = true;
             }
         }
 
         private void LinkWayPoints()
         {
-            for (int i = 0; i < wayPoints.Length; i++)
+            for (int i = 0; i < wayPoints.Count; i++)
             {
-                if (i + 1 == wayPoints.Length)
+                if (i + 1 == wayPoints.Count)
                 {
                     if (isRing)
                         wayPoints[i].Next = wayPoints[0];
@@ -416,7 +380,7 @@ public class EnemyController : MonoBehaviour
                 if (i - 1 < 0)
                 {
                     if (isRing)
-                        wayPoints[i].Prev = wayPoints[wayPoints.Length - 1];
+                        wayPoints[i].Prev = wayPoints[wayPoints.Count - 1];
                     else
                         wayPoints[i].Prev = wayPoints[i + 1];
                 }
@@ -432,18 +396,37 @@ public class EnemyController : MonoBehaviour
                 wayPoint.ToNextDistance = (wayPoint.Next.Position - wayPoint.Position).magnitude;
                 wayPoint.ToPrevDistance = (wayPoint.Prev.Position - wayPoint.Position).magnitude;
 
-                longestSegmentDistance = wayPoint.ToNextDistance > longestSegmentDistance
-                                       ? wayPoint.ToNextDistance
-                                       : longestSegmentDistance;
-
-                completeDistance += wayPoint.ToPrevDistance;
-                wayPoint.DistanceFromStart = completeDistance;
+                TotalDistance += wayPoint.ToPrevDistance;
+                wayPoint.DistanceFromStart = TotalDistance;
             }
 
-            completeDistance -= wayPoints[0].ToPrevDistance;
+            TotalDistance -= wayPoints[0].ToPrevDistance;
             wayPoints[0].DistanceFromStart = 0;
         }
 
+        private void CalculateGuardStartPosition(Vector2 guardPosition)
+        {
+            WayPoint nearestSegementWayPoint = wayPoints.OrderBy(waypoint => (waypoint.Position - guardPosition).sqrMagnitude).First();
+            lastWayPoint = nearestSegementWayPoint.Next;
+
+            float guardToNextDistance = (nearestSegementWayPoint.Next.Position - guardPosition).magnitude;
+            float guardToPrevDistance = (nearestSegementWayPoint.Prev.Position - guardPosition).magnitude;
+
+            float segmentStartToEndDistance = nearestSegementWayPoint.ToNextDistance;
+            float guardToSegmentEndWayPointDistance = guardToNextDistance;
+
+
+            if (guardToPrevDistance / nearestSegementWayPoint.ToPrevDistance <
+               guardToNextDistance / nearestSegementWayPoint.ToNextDistance)
+            {
+                segmentStartToEndDistance = nearestSegementWayPoint.ToPrevDistance;
+                guardToSegmentEndWayPointDistance = guardToPrevDistance;
+                lastWayPoint = nearestSegementWayPoint;
+            }
+
+            lerpTime = guardToSegmentEndWayPointDistance / segmentStartToEndDistance;
+
+        }
 
     }
     private class WayPoint
@@ -456,5 +439,7 @@ public class EnemyController : MonoBehaviour
         public float DistanceFromStart;
         public float ToNextDistance;
         public float ToPrevDistance;
+
+        public int index;
     }
 }
