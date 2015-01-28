@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 
 public class EnemyController : MonoBehaviour
 {
@@ -40,7 +41,6 @@ public class EnemyController : MonoBehaviour
     private Vector3 direction = Vector3.zero;
     private float threshold = 0.5f;
 
-    private Vector3 lookDirection;
     private Quaternion initialRotation;
     private Transform viewConeTransform;
 
@@ -55,17 +55,15 @@ public class EnemyController : MonoBehaviour
         ownSpriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
         ownSpriteRenderer.color = Color.white;
 
-        initialRotation = this.transform.rotation;
-
         viewConeTransform = transform.GetChild(0);
         viewConeTransform.localScale = new Vector3((coneAngle / 20f), coneLength * 0.25f, 1);
-
-        Vector3 target = Vector3.up;
-        this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg - 90);
 
         detectedCharacters = new List<GameObject>();
 
         PathToPoints();
+
+        this.transform.rotation = Quaternion.Euler(0, 0, 0);
+
     }
 
     void FixedUpdate()
@@ -83,92 +81,50 @@ public class EnemyController : MonoBehaviour
 
     private void UpdateAnimation()
     {
-        direction = viewConeTransform.up;
-        direction.Normalize();
+        float direction = viewConeTransform.eulerAngles.z;
+        bool canMove = !movementPattern.IsStatic;
 
         if (characterDetected)
         {
             animator.SetBool("Moving", false);
         }
-        else if (direction.y > threshold)
-        {
-
-            animator.SetInteger("Direction", 2);
-            if (!isStatic)
-                animator.SetBool("Moving", true);
-        }
-        else if (Mathf.Abs(direction.y) > threshold)
-        {
-
-            animator.SetInteger("Direction", 0);
-            if (!isStatic)
-                animator.SetBool("Moving", true);
-        }
         else
         {
-            if (direction.x > threshold)
+            if (canMove)
+                animator.SetBool("Moving", true);
+
+            if (direction < 45 || direction > 315)
             {
-
-                animator.SetInteger("Direction", 3);
-                if (!isStatic)
-                    animator.SetBool("Moving", true);
+                animator.SetInteger("Direction", 2);//up
             }
-            else if (Mathf.Abs(direction.x) > threshold)
+            else if (direction < 135)
             {
-
-                animator.SetInteger("Direction", 1);
-                if (!isStatic)
-                    animator.SetBool("Moving", true);
+                animator.SetInteger("Direction", 1);//left
             }
-
+            else if (direction < 225)
+            {
+                animator.SetInteger("Direction", 0);//down
+            }
+            else
+            {
+                animator.SetInteger("Direction", 3);//right
+            }
         }
+
+
+
 
     }
 
     private void UpdatePositionAndRotation()
     {
-        movementPattern.UpdateGuard(Time.fixedDeltaTime);
+        if (!characterDetected)
+        {
+            movementPattern.UpdateGuard(Time.fixedDeltaTime);
 
-        transform.position = movementPattern.GetPosition();
-        viewConeTransform.rotation = movementPattern.GetDirection();
-
-        //Vector3 startPosition = points[startPoint];
-        //Vector3 endPosition = points[endPoint];
-
-        //float distance = (endPosition - startPosition).magnitude;
-
-        //if (!characterDetected)
-        //{
-        //    Vector3 previousPosition = this.transform.position;
-
-        //    this.transform.position = Vector3.Lerp(points[startPoint], points[endPoint], lerpTime);
-
-        //    direction = this.transform.position - previousPosition;
-
-        //    lookDirection = direction.magnitude == 0 ? initialRotation * this.transform.up : direction;
-        //    lookDirection *= -1;
-        //    lookDirection.Normalize();
-
-        //    viewConeTransform.rotation = Quaternion.FromToRotation(Vector3.up, lookDirection * -coneLength);
-
-        //    lerpTime += Time.fixedDeltaTime * (10 / distance) * WalkSpeed * speedMultiplier;
-        //}
-
-
-        //if (lerpTime > 1)
-        //{
-        //    lerpTime -= 1;
-        //    startPoint = endPoint;
-
-        //    if (endPoint == points.Length - 1 && isRing)
-        //        endPoint = 0;
-        //    else if (endPoint == points.Length - 1 && !isRing)
-        //        iterator = -1;
-        //    else if (endPoint == 0)
-        //        iterator = 1;
-
-        //    endPoint += iterator;
-        //}
+            transform.position = movementPattern.GetPosition();
+            viewConeTransform.rotation = movementPattern.GetDirection();
+        }
 
     }
 
@@ -213,6 +169,7 @@ public class EnemyController : MonoBehaviour
     private void ViewConeCharacterIntersection(GameObject character)
     {
         Vector3 toCharacter = character.transform.position - this.transform.position;
+        Vector3 lookDirection = -viewConeTransform.up;
 
         Debug.DrawRay(transform.position, lookDirection * -coneLength, Color.red);
 
@@ -248,7 +205,6 @@ public class EnemyController : MonoBehaviour
         {
             EdgeCollider2D path = pathNode.GetComponent<EdgeCollider2D>();
 
-            Debug.Log(name[name.Length - 1] + ":");
             movementPattern.CreatePattern(transform, pathNode.position, path.points);
 
             pathNode.gameObject.SetActive(false);
@@ -261,18 +217,21 @@ public class EnemyController : MonoBehaviour
     }
 
 
-
-
-
-
     private class MovementPattern
     {
+        public bool IsStatic
+        {
+            get { return isStatic; }
+        }
+
         private List<WayPoint> wayPoints;
 
         private WayPoint lastWayPoint;
 
         private Vector2 guardPosition;
         private Quaternion guardRotation;
+
+        private Direction direction = Direction.ToNext;
 
         private float TotalDistance;
 
@@ -281,26 +240,26 @@ public class EnemyController : MonoBehaviour
 
         private bool isRing;
         private bool isStatic;
-        private bool goesForward = true;
+
 
         public void UpdateGuard(float deltaTime)
         {
             if (!isStatic)
             {
-                lastWayPoint = goesForward ? lastWayPoint.Next : lastWayPoint.Prev;
 
-                lerpTime += deltaTime * 10 / lastWayPoint.ToNextDistance * 0.1f;
+                lerpTime += deltaTime * 10 / lastWayPoint.ToNextDistance[direction] * 0.1f;
 
                 if (lerpTime > 1)
                 {
                     lerpTime %= 1;
 
-                    if (wayPoints.First() == lastWayPoint)
-                        goesForward = false;
+                    if (!isRing)
+                    {
+                        if (lastWayPoint.Next[Direction.ToNext] == lastWayPoint.Next[Direction.ToPrev])
+                            direction = (Direction)(((int)direction + 1) % 2);
+                    }
 
-                    else if (wayPoints.Last() == lastWayPoint)
-                        goesForward = true;
-
+                    lastWayPoint = lastWayPoint.Next[direction];
                 }
             }
         }
@@ -308,14 +267,20 @@ public class EnemyController : MonoBehaviour
         public Vector2 GetPosition()
         {
             if (!isStatic)
-                guardPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.Next.Position, lerpTime);
+                guardPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.Next[direction].Position, lerpTime);
             return guardPosition;
         }
 
         public Quaternion GetDirection()
         {
             if (!isStatic)
-                guardRotation = Quaternion.Euler(0, 0, 0);
+            {
+                Vector2 orientation = lastWayPoint.Next[direction].Position - lastWayPoint.Position;
+                float upAngle = Vector2.Angle(Vector2.up, orientation);
+                upAngle *= Mathf.Sign(-orientation.x);
+
+                guardRotation = Quaternion.Euler(0, 0, upAngle);
+            }
             return guardRotation;
         }
 
@@ -324,7 +289,7 @@ public class EnemyController : MonoBehaviour
             if (!isStatic)
                 foreach (WayPoint wayPoint in wayPoints)
                 {
-                    Debug.DrawRay(wayPoint.Position, wayPoint.Next.Position - wayPoint.Position, Color.green);
+                    Debug.DrawRay(wayPoint.Position, wayPoint.Next[direction].Position - wayPoint.Position, Color.green);
                 }
         }
 
@@ -352,12 +317,13 @@ public class EnemyController : MonoBehaviour
             {
                 wayPoints.Add(new WayPoint());
                 wayPoints[i].Position = patternStartPosition + patternPositions[i];
-                wayPoints[i].index = i;
             }
 
             if ((wayPoints[wayPoints.Count - 1].Position - wayPoints[0].Position).magnitude < 0.5f)
             {
-                wayPoints.RemoveAt(wayPoints.Count - 1);
+                if (wayPoints.Count > 2)
+                    wayPoints.RemoveAt(wayPoints.Count - 1);
+
                 isRing = true;
             }
         }
@@ -366,26 +332,27 @@ public class EnemyController : MonoBehaviour
         {
             for (int i = 0; i < wayPoints.Count; i++)
             {
+
                 if (i + 1 == wayPoints.Count)
                 {
                     if (isRing)
-                        wayPoints[i].Next = wayPoints[0];
+                        wayPoints[i].Next.Add(Direction.ToNext, wayPoints[0]);
                     else
-                        wayPoints[i].Next = wayPoints[i - 1];
+                        wayPoints[i].Next.Add(Direction.ToNext, wayPoints[i - 1]);
                 }
                 else
-                    wayPoints[i].Next = wayPoints[i + 1];
+                    wayPoints[i].Next.Add(Direction.ToNext, wayPoints[i + 1]);
 
 
                 if (i - 1 < 0)
                 {
                     if (isRing)
-                        wayPoints[i].Prev = wayPoints[wayPoints.Count - 1];
+                        wayPoints[i].Next.Add(Direction.ToPrev, wayPoints[wayPoints.Count - 1]);
                     else
-                        wayPoints[i].Prev = wayPoints[i + 1];
+                        wayPoints[i].Next.Add(Direction.ToPrev, wayPoints[i + 1]);
                 }
                 else
-                    wayPoints[i].Prev = wayPoints[i - 1];
+                    wayPoints[i].Next.Add(Direction.ToPrev, wayPoints[i - 1]);
             }
         }
 
@@ -393,33 +360,33 @@ public class EnemyController : MonoBehaviour
         {
             foreach (WayPoint wayPoint in wayPoints)
             {
-                wayPoint.ToNextDistance = (wayPoint.Next.Position - wayPoint.Position).magnitude;
-                wayPoint.ToPrevDistance = (wayPoint.Prev.Position - wayPoint.Position).magnitude;
+                wayPoint.ToNextDistance[Direction.ToNext] = (wayPoint.Next[Direction.ToNext].Position - wayPoint.Position).magnitude;
+                wayPoint.ToNextDistance[Direction.ToPrev] = (wayPoint.Next[Direction.ToPrev].Position - wayPoint.Position).magnitude;
 
-                TotalDistance += wayPoint.ToPrevDistance;
+                TotalDistance += wayPoint.ToNextDistance[Direction.ToPrev];
                 wayPoint.DistanceFromStart = TotalDistance;
             }
 
-            TotalDistance -= wayPoints[0].ToPrevDistance;
+            TotalDistance -= wayPoints[0].ToNextDistance[Direction.ToPrev];
             wayPoints[0].DistanceFromStart = 0;
         }
 
         private void CalculateGuardStartPosition(Vector2 guardPosition)
         {
             WayPoint nearestSegementWayPoint = wayPoints.OrderBy(waypoint => (waypoint.Position - guardPosition).sqrMagnitude).First();
-            lastWayPoint = nearestSegementWayPoint.Next;
+            lastWayPoint = nearestSegementWayPoint.Next[Direction.ToNext];
 
-            float guardToNextDistance = (nearestSegementWayPoint.Next.Position - guardPosition).magnitude;
-            float guardToPrevDistance = (nearestSegementWayPoint.Prev.Position - guardPosition).magnitude;
+            float guardToNextDistance = (nearestSegementWayPoint.Next[Direction.ToNext].Position - guardPosition).magnitude;
+            float guardToPrevDistance = (nearestSegementWayPoint.Next[Direction.ToPrev].Position - guardPosition).magnitude;
 
-            float segmentStartToEndDistance = nearestSegementWayPoint.ToNextDistance;
+            float segmentStartToEndDistance = nearestSegementWayPoint.ToNextDistance[Direction.ToNext];
             float guardToSegmentEndWayPointDistance = guardToNextDistance;
 
 
-            if (guardToPrevDistance / nearestSegementWayPoint.ToPrevDistance <
-               guardToNextDistance / nearestSegementWayPoint.ToNextDistance)
+            if (guardToPrevDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToPrev] <
+               guardToNextDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext])
             {
-                segmentStartToEndDistance = nearestSegementWayPoint.ToPrevDistance;
+                segmentStartToEndDistance = nearestSegementWayPoint.ToNextDistance[Direction.ToPrev];
                 guardToSegmentEndWayPointDistance = guardToPrevDistance;
                 lastWayPoint = nearestSegementWayPoint;
             }
@@ -431,15 +398,19 @@ public class EnemyController : MonoBehaviour
     }
     private class WayPoint
     {
-        public WayPoint Next;
-        public WayPoint Prev;
+        public Dictionary<Direction, WayPoint> Next = new Dictionary<Direction, WayPoint>(2);
+        public Dictionary<Direction, float> ToNextDistance = new Dictionary<Direction, float>(2);
 
         public Vector2 Position;
 
         public float DistanceFromStart;
-        public float ToNextDistance;
-        public float ToPrevDistance;
+    }
 
-        public int index;
+    private enum Direction
+    {
+        ToNext,
+        ToPrev
     }
 }
+
+
