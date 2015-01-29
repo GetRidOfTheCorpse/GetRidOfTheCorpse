@@ -1,10 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Collections.Generic;
-using System;
-using System.IO;
-using System.Runtime.Remoting.Messaging;
+using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
@@ -12,19 +8,7 @@ public class EnemyController : MonoBehaviour
     public float coneAngle = 11;
     public float coneLength = 5;
 
-    //WalkPath Vars
-    private Vector3[] points;
-    private MovementPattern movementPattern = new MovementPattern();
-    private int startPoint;
-    private int endPoint;
-    private int iterator = 1;
-    private bool isRing;
-    private bool isStatic;
-    private float longestDistance = float.MinValue;
-
-
-    private float lerpTime;
-    private float speedMultiplier = 0.1f;
+    private MovementPattern movementPattern;
 
     private GameObject player;
     private bool previouseCharacterDetected;
@@ -36,53 +20,63 @@ public class EnemyController : MonoBehaviour
     private float bubbleTime;
     private float bubbleTimeOut = 0.5f;
 
-    private SpriteRenderer ownSpriteRenderer;
+    private SpriteRenderer guardSpriteRenderer;
     private Animator animator;
-    private Vector3 direction = Vector3.zero;
-    private float threshold = 0.5f;
 
-    private Quaternion initialRotation;
-    private Transform viewConeTransform;
+    private Transform viewCone;
+
+    private bool isStatic;
 
     void Start()
     {
+        FindNessesaryGameCompontent();
+        ConvertPathToMovementPattern();
+        InitializeDefaultValues();
+    }
+
+    private void FindNessesaryGameCompontent()
+    {
+        guardSpriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
+        animator = (Animator)GetComponent("Animator");
+
         player = GameObject.FindGameObjectWithTag("Player");
         deadBody = GameObject.FindGameObjectWithTag("Body");
+        viewCone = transform.FindChild("viewCone");
+
         bubble = (SpriteRenderer)transform.FindChild("bubble").GetComponent("SpriteRenderer");
-        animator = (Animator)GetComponent("Animator");
+    }
+
+    private void InitializeDefaultValues()
+    {
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+
         animator.speed = 0.5f;
 
-        ownSpriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
-        ownSpriteRenderer.color = Color.white;
+        guardSpriteRenderer.color = Color.white;
 
-        viewConeTransform = transform.GetChild(0);
-        viewConeTransform.localScale = new Vector3((coneAngle / 20f), coneLength * 0.25f, 1);
+        viewCone.localScale = new Vector3((coneAngle / 22.5f), coneLength * 0.245f, 1);
 
         detectedCharacters = new List<GameObject>();
-
-        PathToPoints();
-
-        this.transform.rotation = Quaternion.Euler(0, 0, 0);
-
     }
 
     void FixedUpdate()
     {
+        movementPattern.DrawPattern();
         detectedCharacters.Clear();
 
         UpdatePositionAndRotation();
-        ViewConeCharacterIntersection(player);
-        ViewConeCharacterIntersection(deadBody);
-        HandleDetectedCharacters();
         UpdateAnimation();
 
-        movementPattern.DrawPattern();
+        ViewConeCharacterIntersection(player);
+        ViewConeCharacterIntersection(deadBody);
+
+        HandleDetectedCharacters();
     }
 
     private void UpdateAnimation()
     {
-        float direction = viewConeTransform.eulerAngles.z;
-        bool canMove = !movementPattern.IsStatic;
+        float direction = viewCone.eulerAngles.z;
+        bool canMove = !isStatic;
 
         if (characterDetected)
         {
@@ -110,10 +104,6 @@ public class EnemyController : MonoBehaviour
                 animator.SetInteger("Direction", 3);//right
             }
         }
-
-
-
-
     }
 
     private void UpdatePositionAndRotation()
@@ -123,7 +113,7 @@ public class EnemyController : MonoBehaviour
             movementPattern.UpdateGuard(Time.fixedDeltaTime);
 
             transform.position = movementPattern.GetPosition();
-            viewConeTransform.rotation = movementPattern.GetDirection();
+            viewCone.rotation = movementPattern.GetDirection();
         }
 
     }
@@ -168,8 +158,8 @@ public class EnemyController : MonoBehaviour
 
     private void ViewConeCharacterIntersection(GameObject character)
     {
-        Vector3 toCharacter = character.transform.position - this.transform.position;
-        Vector3 lookDirection = -viewConeTransform.up;
+        Vector3 toCharacter = character.transform.position - transform.position;
+        Vector3 lookDirection = -viewCone.up;
 
         Debug.DrawRay(transform.position, lookDirection * -coneLength, Color.red);
 
@@ -194,12 +184,14 @@ public class EnemyController : MonoBehaviour
 
     }
 
-    private void PathToPoints()
+    private void ConvertPathToMovementPattern()
     {
         string[] name = this.name.Split('_');
         string pathName = name[name.Length - 2] + "_" + name[name.Length - 1] + "Path";
 
         Transform pathNode = transform.parent.Find(pathName);
+
+        movementPattern = new MovementPattern();
 
         if (pathNode != null)
         {
@@ -213,17 +205,13 @@ public class EnemyController : MonoBehaviour
         {
             //Debug.LogWarning("Path for " + name + " " + pathName + " not found!");
             movementPattern.CreateStaticPosition(transform);
+            isStatic = true;
         }
     }
 
 
     private class MovementPattern
     {
-        public bool IsStatic
-        {
-            get { return isStatic; }
-        }
-
         private List<WayPoint> wayPoints;
 
         private WayPoint lastWayPoint;
@@ -231,11 +219,10 @@ public class EnemyController : MonoBehaviour
         private Vector2 guardPosition;
         private Quaternion guardRotation;
 
-        private Direction direction = Direction.ToNext;
+        private Direction direction;
 
-        private float TotalDistance;
+        private float totalPatternDistance;
 
-        private float totalTime;
         private float lerpTime;
 
         private bool isRing;
@@ -363,36 +350,32 @@ public class EnemyController : MonoBehaviour
                 wayPoint.ToNextDistance[Direction.ToNext] = (wayPoint.Next[Direction.ToNext].Position - wayPoint.Position).magnitude;
                 wayPoint.ToNextDistance[Direction.ToPrev] = (wayPoint.Next[Direction.ToPrev].Position - wayPoint.Position).magnitude;
 
-                TotalDistance += wayPoint.ToNextDistance[Direction.ToPrev];
-                wayPoint.DistanceFromStart = TotalDistance;
+                totalPatternDistance += wayPoint.ToNextDistance[Direction.ToPrev];
+                wayPoint.DistanceFromStart = totalPatternDistance;
             }
 
-            TotalDistance -= wayPoints[0].ToNextDistance[Direction.ToPrev];
+            totalPatternDistance -= wayPoints[0].ToNextDistance[Direction.ToPrev];
             wayPoints[0].DistanceFromStart = 0;
         }
 
         private void CalculateGuardStartPosition(Vector2 guardPosition)
         {
             WayPoint nearestSegementWayPoint = wayPoints.OrderBy(waypoint => (waypoint.Position - guardPosition).sqrMagnitude).First();
-            lastWayPoint = nearestSegementWayPoint.Next[Direction.ToNext];
+            lastWayPoint = nearestSegementWayPoint;
 
             float guardToNextDistance = (nearestSegementWayPoint.Next[Direction.ToNext].Position - guardPosition).magnitude;
             float guardToPrevDistance = (nearestSegementWayPoint.Next[Direction.ToPrev].Position - guardPosition).magnitude;
 
-            float segmentStartToEndDistance = nearestSegementWayPoint.ToNextDistance[Direction.ToNext];
             float guardToSegmentEndWayPointDistance = guardToNextDistance;
-
 
             if (guardToPrevDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToPrev] <
                guardToNextDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext])
             {
-                segmentStartToEndDistance = nearestSegementWayPoint.ToNextDistance[Direction.ToPrev];
                 guardToSegmentEndWayPointDistance = guardToPrevDistance;
-                lastWayPoint = nearestSegementWayPoint;
+                lastWayPoint = lastWayPoint.Next[Direction.ToPrev];
             }
 
-            lerpTime = guardToSegmentEndWayPointDistance / segmentStartToEndDistance;
-
+            lerpTime = 1 - (guardToSegmentEndWayPointDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext]);
         }
 
     }

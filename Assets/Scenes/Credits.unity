@@ -253,7 +253,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 94}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &520212768
@@ -271,7 +271,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
     m_Font: {fileID: 12800000, guid: 41f024ac6e2684b83b161a0901b3ce97, type: 3}
-    m_FontSize: 30
+    m_FontSize: 50
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -320,7 +320,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -549}
+  m_AnchoredPosition: {x: 0, y: -818}
   m_SizeDelta: {x: -516, y: -284}
   m_Pivot: {x: .5, y: .5}
 --- !u!111 &537104131
@@ -387,7 +387,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
     m_Font: {fileID: 12800000, guid: 41f024ac6e2684b83b161a0901b3ce97, type: 3}
-    m_FontSize: 16
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
@@ -431,7 +431,7 @@ AudioSource:
   m_GameObject: {fileID: 1211529215}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: d065759aab3143e4bb4f7be28ba38954, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 0805a83e1f209854286cba0986b59b77, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -501,7 +501,7 @@ Animation:
   m_GameObject: {fileID: 1211529215}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 0}
+  m_Animation: {fileID: 7400000, guid: 6cc285519769b4641a010ca0370f338b, type: 2}
   m_Animations:
   - {fileID: 7400000, guid: 6cc285519769b4641a010ca0370f338b, type: 2}
   m_WrapMode: 0
@@ -593,6 +593,7 @@ GameObject:
   - 114: {fileID: 1835171989}
   - 222: {fileID: 1835171992}
   - 114: {fileID: 1835171991}
+  - 114: {fileID: 1835171988}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -619,6 +620,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1835171988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1835171986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e305dad0b4e8b7044b6654e02791403d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LevelName: MainMenu
+  StartOffset: 8
+  TransisionSpeed: 2
 --- !u!114 &1835171989
 MonoBehaviour:
   m_ObjectHideFlags: 0
