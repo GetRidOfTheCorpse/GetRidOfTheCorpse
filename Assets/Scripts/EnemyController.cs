@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float WalkSpeed = 1;
-    public float coneAngle = 11;
-    public float coneLength = 5;
+    private const float coneAngle = 22.5f;
+    private const float coneLength = 5;
 
     private MovementPattern movementPattern;
 
     private GameObject player;
-    private bool previouseCharacterDetected;
+    private GameObject deadBody;
+
+    private List<GameObject> detectedCharacters;
+    private int detectedCharactersCount;
     private bool characterDetected;
 
-    private GameObject deadBody;
-    private List<GameObject> detectedCharacters;
     private SpriteRenderer bubble;
-    private float bubbleTime;
-    private float bubbleTimeOut = 0.5f;
+    private float alertTime;
+    private float alertTimeOut = 0.5f;
 
     private SpriteRenderer guardSpriteRenderer;
     private Animator animator;
 
     private Transform viewCone;
 
-    private bool isStatic;
+    private bool isStationary;
 
     void Start()
     {
@@ -76,7 +76,7 @@ public class EnemyController : MonoBehaviour
     private void UpdateAnimation()
     {
         float direction = viewCone.eulerAngles.z;
-        bool canMove = !isStatic;
+        bool canMove = !isStationary;
 
         if (characterDetected)
         {
@@ -122,65 +122,56 @@ public class EnemyController : MonoBehaviour
     {
         characterDetected = detectedCharacters.Count > 0;
 
-        if (detectedCharacters.Contains(deadBody))
+        if (detectedCharactersCount != detectedCharacters.Count)
         {
-            PlayerController.Instance.GotYou(true);
-        }
-
-        if (detectedCharacters.Contains(player))
-        {
-            if (!previouseCharacterDetected && characterDetected)
+            if (detectedCharacters.Contains(deadBody))
             {
-                SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
-                previouseCharacterDetected = characterDetected;
+                PlayerController.Instance.GotYou(true);
             }
 
-
+            if (detectedCharacters.Contains(player))
+            {
+                SoundManager.Instance.OneShot(SoundEffect.Hey, gameObject);
+                alertTime = 0;
+            }
+        }
+        else if (alertTime < alertTimeOut)
+        {
             bubble.enabled = true;
+
+            alertTime += Time.fixedDeltaTime;
         }
-        else
-        {
-            bubbleTime = 0;
-            previouseCharacterDetected = false;
-            bubble.enabled = false;
-        }
+        else bubble.enabled = false;
 
-        if (bubbleTime > bubbleTimeOut)
-        {
-            bubble.enabled = false;
-        }
-
-        bubbleTime += Time.fixedDeltaTime;
-
-
+        detectedCharactersCount = detectedCharacters.Count;
 
     }
 
     private void ViewConeCharacterIntersection(GameObject character)
     {
+        DrawDebugViewCone();
+
         Vector3 toCharacter = character.transform.position - transform.position;
-        Vector3 lookDirection = -viewCone.up;
-
-        Debug.DrawRay(transform.position, lookDirection * -coneLength, Color.red);
-
-        Debug.DrawRay(transform.position, Quaternion.AngleAxis(-coneAngle, Vector3.forward) * lookDirection * -coneLength, Color.blue);
-        Debug.DrawRay(transform.position, Quaternion.AngleAxis(coneAngle, Vector3.forward) * lookDirection * -coneLength, Color.blue);
-
+        Vector3 lookDirection = viewCone.up;
 
         if (toCharacter.magnitude < coneLength)
         {
-            toCharacter.Normalize();
+            float coneArea = Mathf.Abs(Vector2.Angle(lookDirection, toCharacter));
 
-            Vector3 coneArea = Vector3.Cross(lookDirection, toCharacter);
-            bool lookingTowardsPlayer = toCharacter.magnitude > (toCharacter + lookDirection).magnitude;
-
-            if (coneArea.magnitude < coneAngle / 45f && lookingTowardsPlayer)
+            if (coneArea < coneAngle)
             {
                 detectedCharacters.Add(character);
                 PlayerController.Instance.GotYou();
             }
-
         }
+    }
+
+    private void DrawDebugViewCone()
+    {
+        Debug.DrawRay(transform.position, viewCone.up * coneLength, Color.red);
+
+        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, -coneAngle) * viewCone.up * coneLength, Color.blue);
+        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, coneAngle) * viewCone.up * coneLength, Color.blue);
 
     }
 
@@ -203,9 +194,9 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            //Debug.LogWarning("Path for " + name + " " + pathName + " not found!");
             movementPattern.CreateStaticPosition(transform);
-            isStatic = true;
+
+            isStationary = true;
         }
     }
 
@@ -226,12 +217,12 @@ public class EnemyController : MonoBehaviour
         private float lerpTime;
 
         private bool isRing;
-        private bool isStatic;
+        private bool isStationary;
 
 
         public void UpdateGuard(float deltaTime)
         {
-            if (!isStatic)
+            if (!isStationary)
             {
 
                 lerpTime += deltaTime * 10 / lastWayPoint.ToNextDistance[direction] * 0.1f;
@@ -253,14 +244,14 @@ public class EnemyController : MonoBehaviour
 
         public Vector2 GetPosition()
         {
-            if (!isStatic)
+            if (!isStationary)
                 guardPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.Next[direction].Position, lerpTime);
             return guardPosition;
         }
 
         public Quaternion GetDirection()
         {
-            if (!isStatic)
+            if (!isStationary)
             {
                 Vector2 orientation = lastWayPoint.Next[direction].Position - lastWayPoint.Position;
                 float upAngle = Vector2.Angle(Vector2.up, orientation);
@@ -273,7 +264,7 @@ public class EnemyController : MonoBehaviour
 
         public void DrawPattern()
         {
-            if (!isStatic)
+            if (!isStationary)
                 foreach (WayPoint wayPoint in wayPoints)
                 {
                     Debug.DrawRay(wayPoint.Position, wayPoint.Next[direction].Position - wayPoint.Position, Color.green);
@@ -284,7 +275,7 @@ public class EnemyController : MonoBehaviour
         {
             guardPosition = guardTransform.position;
             guardRotation = guardTransform.rotation;
-            isStatic = true;
+            isStationary = true;
         }
 
         public void CreatePattern(Transform guardTransform, Vector2 patternStartPosition, Vector2[] patternPositions)
@@ -379,6 +370,7 @@ public class EnemyController : MonoBehaviour
         }
 
     }
+
     private class WayPoint
     {
         public Dictionary<Direction, WayPoint> Next = new Dictionary<Direction, WayPoint>(2);
