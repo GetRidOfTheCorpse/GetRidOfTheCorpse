@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    private const float coneAngle = 22.5f;
-    private const float coneLength = 5;
-
     private MovementPattern movementPattern;
 
-    private GameObject player;
-    private GameObject deadBody;
+    private Character player;
+    private Character corpse;
 
-    private List<GameObject> detectedCharacters;
+    private List<Character> detectedCharacters;
     private int detectedCharactersCount;
     private bool characterDetected;
+
+    private List<Character> sensedCharacters;
 
     private SpriteRenderer bubble;
     private float alertTime;
@@ -24,23 +24,29 @@ public class EnemyController : MonoBehaviour
     private Animator animator;
 
     private Transform viewCone;
+    private float viewConeAngle = 22.5f;
+    private float viewConeLength = 5;
+
+    private float sleepingTime;
+    private bool awake;
+    private bool sleeping;
 
     private bool isStationary;
 
     void Start()
     {
-        FindNessesaryGameCompontent();
+        SetNessesaryGameCompontents();
         ConvertPathToMovementPattern();
         InitializeDefaultValues();
     }
 
-    private void FindNessesaryGameCompontent()
+    private void SetNessesaryGameCompontents()
     {
         guardSpriteRenderer = (SpriteRenderer)GetComponent("SpriteRenderer");
         animator = (Animator)GetComponent("Animator");
 
-        player = GameObject.FindGameObjectWithTag("Player");
-        deadBody = GameObject.FindGameObjectWithTag("Body");
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        corpse = GameObject.FindGameObjectWithTag("Body").GetComponent<BodyController>();
         viewCone = transform.FindChild("viewCone");
 
         bubble = (SpriteRenderer)transform.FindChild("bubble").GetComponent("SpriteRenderer");
@@ -54,29 +60,43 @@ public class EnemyController : MonoBehaviour
 
         guardSpriteRenderer.color = Color.white;
 
-        viewCone.localScale = new Vector3((coneAngle / 22.5f), coneLength * 0.245f, 1);
+        viewCone.localScale = new Vector3((viewConeAngle / 22.5f), viewConeLength * 0.245f, 1);
 
-        detectedCharacters = new List<GameObject>();
+        detectedCharacters = new List<Character>();
+        sensedCharacters = new List<Character>();
+
+        UpdatePositionAndRotation();
     }
 
     void FixedUpdate()
     {
+
         movementPattern.DrawPattern();
+        movementPattern.DrawBoundingCircle();
         detectedCharacters.Clear();
+        sensedCharacters.Clear();
 
-        UpdatePositionAndRotation();
-        UpdateAnimation();
+        BoundingCircleIntersection(corpse);
+        BoundingCircleIntersection(player);
 
-        ViewConeCharacterIntersection(player);
-        ViewConeCharacterIntersection(deadBody);
+        HandleSensedCharacters();
 
-        HandleDetectedCharacters();
+        if (!sleeping)
+        {
+            ViewConeCharacterIntersection(corpse);
+            ViewConeCharacterIntersection(player);
+
+            HandleDetectedCharacters();
+
+            UpdatePositionAndRotation();
+            UpdateAnimation();
+        }
+        else sleepingTime += Time.deltaTime;
     }
 
     private void UpdateAnimation()
     {
         float direction = viewCone.eulerAngles.z;
-        bool canMove = !isStationary;
 
         if (characterDetected)
         {
@@ -84,7 +104,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            if (canMove)
+            if (!isStationary)
                 animator.SetBool("Moving", true);
 
             if (direction < 45 || direction > 315)
@@ -110,7 +130,7 @@ public class EnemyController : MonoBehaviour
     {
         if (!characterDetected)
         {
-            movementPattern.UpdateGuard(Time.fixedDeltaTime);
+            movementPattern.UpdatePattern(Time.fixedDeltaTime);
 
             transform.position = movementPattern.GetPosition();
             viewCone.rotation = movementPattern.GetDirection();
@@ -124,7 +144,7 @@ public class EnemyController : MonoBehaviour
 
         if (detectedCharactersCount != detectedCharacters.Count)
         {
-            if (detectedCharacters.Contains(deadBody))
+            if (detectedCharacters.Contains(corpse))
             {
                 PlayerController.Instance.GotYou(true);
             }
@@ -147,31 +167,67 @@ public class EnemyController : MonoBehaviour
 
     }
 
-    private void ViewConeCharacterIntersection(GameObject character)
+    private void HandleSensedCharacters()
+    {
+        if (sensedCharacters.Count > 0)
+        {
+            sleeping = false;
+
+            if (!awake && !isStationary)
+            {
+                movementPattern.WakeUpPattern(sleepingTime);
+                awake = true;
+
+                sleepingTime = 0;
+            }
+        }
+        else
+        {
+            sleeping = true;
+            awake = false;
+
+            UpdateAnimation();
+        }
+    }
+
+    private void ViewConeCharacterIntersection(Character character)
     {
         DrawDebugViewCone();
 
-        Vector3 toCharacter = character.transform.position - transform.position;
+        Vector3 toCharacter = character.GetTransform().position - transform.position;
         Vector3 lookDirection = viewCone.up;
 
-        if (toCharacter.magnitude < coneLength)
+        if (toCharacter.magnitude < viewConeLength)
         {
             float coneArea = Mathf.Abs(Vector2.Angle(lookDirection, toCharacter));
 
-            if (coneArea < coneAngle)
+            if (coneArea < viewConeAngle)
             {
                 detectedCharacters.Add(character);
                 PlayerController.Instance.GotYou();
             }
         }
+
+    }
+
+    private void BoundingCircleIntersection(Character character)
+    {
+        if (movementPattern.IsBoundingCircleIntersected(character.GetBoundingCircle()))
+        {
+            sensedCharacters.Add(character);
+        }
+
     }
 
     private void DrawDebugViewCone()
     {
-        Debug.DrawRay(transform.position, viewCone.up * coneLength, Color.red);
+        Debug.DrawRay(transform.position, viewCone.up * viewConeLength, Color.red);
 
-        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, -coneAngle) * viewCone.up * coneLength, Color.blue);
-        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, coneAngle) * viewCone.up * coneLength, Color.blue);
+        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, -viewConeAngle) * viewCone.up * viewConeLength, Color.blue);
+        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, viewConeAngle) * viewCone.up * viewConeLength, Color.blue);
+
+        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, -viewConeAngle / 2f) * viewCone.up * viewConeLength, Color.blue);
+        Debug.DrawRay(transform.position, Quaternion.Euler(0, 0, viewConeAngle / 2f) * viewCone.up * viewConeLength, Color.blue);
 
     }
 
@@ -188,56 +244,109 @@ public class EnemyController : MonoBehaviour
         {
             EdgeCollider2D path = pathNode.GetComponent<EdgeCollider2D>();
 
-            movementPattern.CreatePattern(transform, pathNode.position, path.points);
+            movementPattern.CreatePattern(transform, pathNode.position, path.points, viewConeLength);
 
             pathNode.gameObject.SetActive(false);
         }
         else
         {
-            movementPattern.CreateStaticPosition(transform);
+            movementPattern.CreateStaticPosition(transform, viewConeLength);
 
             isStationary = true;
         }
     }
 
-
     private class MovementPattern
     {
         private List<WayPoint> wayPoints;
 
+        private BoundingCircle boundingCircle;
+        private float viewConeMargin;
+
         private WayPoint lastWayPoint;
 
-        private Vector2 guardPosition;
-        private Quaternion guardRotation;
+        private Vector2 characterPosition;
+        private Quaternion characterRotation;
 
         private Direction direction;
 
-        private float totalPatternDistance;
+        private float totalDistance;
+        private float walkingSpeed = 2;
 
         private float lerpTime;
 
         private bool isRing;
         private bool isStationary;
 
+        public void WakeUpPattern(float timeSlept)
+        {
+            float distanceTraveled = timeSlept * walkingSpeed + lastWayPoint.ToNextDistance[direction] * lerpTime;
+            distanceTraveled += direction == Direction.ToNext ? lastWayPoint.DistanceFromStart : totalDistance - lastWayPoint.DistanceFromStart;
 
-        public void UpdateGuard(float deltaTime)
+
+            float overflow = (distanceTraveled / totalDistance);
+            if (overflow > 1)
+            {
+                direction = (Direction)(((int)direction + 1) % 2);
+                distanceTraveled -= totalDistance;
+            }
+
+            float progress = distanceTraveled % totalDistance;
+
+            if (!isRing)
+            {
+                if (direction == Direction.ToNext)
+                {
+                    lastWayPoint = wayPoints[0];
+                    float nextDistanceToStart = lastWayPoint.Next[direction].DistanceFromStart;
+
+                    while (nextDistanceToStart < progress)
+                    {
+                        lastWayPoint = lastWayPoint.Next[direction];
+                        nextDistanceToStart = lastWayPoint.Next[direction].DistanceFromStart;
+                    }
+
+                    progress -= lastWayPoint.DistanceFromStart;
+
+                    lerpTime = progress / lastWayPoint.ToNextDistance[direction];
+                }
+                else
+                {
+                    lastWayPoint = wayPoints[wayPoints.Count - 1];
+                    float prevDistanceToStart = totalDistance - lastWayPoint.Next[direction].DistanceFromStart;
+
+                    while (prevDistanceToStart < progress)
+                    {
+                        lastWayPoint = lastWayPoint.Next[direction];
+                        prevDistanceToStart = totalDistance - lastWayPoint.Next[direction].DistanceFromStart;
+                    }
+
+                    progress -= totalDistance - lastWayPoint.DistanceFromStart;
+
+                    lerpTime = progress / lastWayPoint.ToNextDistance[direction];
+                }
+
+            }
+
+        }
+
+        public void UpdatePattern(float deltaTime)
         {
             if (!isStationary)
             {
-
-                lerpTime += deltaTime * 10 / lastWayPoint.ToNextDistance[direction] * 0.1f;
+                lerpTime += deltaTime * walkingSpeed / lastWayPoint.ToNextDistance[direction];
 
                 if (lerpTime > 1)
                 {
                     lerpTime %= 1;
+
+                    lastWayPoint = lastWayPoint.Next[direction];
 
                     if (!isRing)
                     {
                         if (lastWayPoint.Next[Direction.ToNext] == lastWayPoint.Next[Direction.ToPrev])
                             direction = (Direction)(((int)direction + 1) % 2);
                     }
-
-                    lastWayPoint = lastWayPoint.Next[direction];
                 }
             }
         }
@@ -245,8 +354,8 @@ public class EnemyController : MonoBehaviour
         public Vector2 GetPosition()
         {
             if (!isStationary)
-                guardPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.Next[direction].Position, lerpTime);
-            return guardPosition;
+                characterPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.Next[direction].Position, lerpTime);
+            return characterPosition;
         }
 
         public Quaternion GetDirection()
@@ -257,9 +366,14 @@ public class EnemyController : MonoBehaviour
                 float upAngle = Vector2.Angle(Vector2.up, orientation);
                 upAngle *= Mathf.Sign(-orientation.x);
 
-                guardRotation = Quaternion.Euler(0, 0, upAngle);
+                characterRotation = Quaternion.Euler(0, 0, upAngle);
             }
-            return guardRotation;
+            return characterRotation;
+        }
+
+        public bool IsBoundingCircleIntersected(BoundingCircle other)
+        {
+            return boundingCircle.Intersect(other);
         }
 
         public void DrawPattern()
@@ -271,20 +385,61 @@ public class EnemyController : MonoBehaviour
                 }
         }
 
-        public void CreateStaticPosition(Transform guardTransform)
+        public void DrawBoundingCircle()
         {
-            guardPosition = guardTransform.position;
-            guardRotation = guardTransform.rotation;
-            isStationary = true;
+            boundingCircle.Draw();
         }
 
-        public void CreatePattern(Transform guardTransform, Vector2 patternStartPosition, Vector2[] patternPositions)
+        public void CreateStaticPosition(Transform characterTransform, float viewConeLength)
         {
+            viewConeMargin = viewConeLength;
+
+            characterPosition = characterTransform.position;
+            characterRotation = characterTransform.rotation;
+            isStationary = true;
+
+            WayPoint stationaryWayPoint = new WayPoint { Position = characterPosition };
+            wayPoints = new List<WayPoint> { stationaryWayPoint };
+
+            CreateBoundingCircle();
+        }
+
+        public void CreatePattern(Transform characterTransform, Vector2 patternStartPosition, Vector2[] patternPositions, float viewConeLength)
+        {
+            viewConeMargin = viewConeLength;
+
             InitializeWayPoints(patternStartPosition, patternPositions);
             LinkWayPoints();
             CalculateDistances();
+            CreateBoundingCircle();
 
-            CalculateGuardStartPosition(guardTransform.position);
+            CalculateCharacterStartPosition(characterTransform.position);
+        }
+
+        private void CreateBoundingCircle()
+        {
+            float xMin = float.MaxValue;
+            float xMax = float.MinValue;
+            float yMin = float.MaxValue;
+            float yMax = float.MinValue;
+
+            foreach (WayPoint wayPoint in wayPoints)
+            {
+                xMin = wayPoint.Position.x < xMin ? wayPoint.Position.x : xMin;
+                xMax = wayPoint.Position.x > xMax ? wayPoint.Position.x : xMax;
+                yMin = wayPoint.Position.y < yMin ? wayPoint.Position.y : yMin;
+                yMax = wayPoint.Position.y > yMax ? wayPoint.Position.y : yMax;
+            }
+
+            float xCenter = xMin + (xMax - xMin) / 2;
+            float yCenter = yMin + (yMax - yMin) / 2;
+            Vector2 center = new Vector2(xCenter, yCenter);
+
+            float xRadius = xMax - xCenter;
+            float yRadius = yMax - yCenter;
+            float radius = Mathf.Sqrt(xRadius * xRadius + yRadius * yRadius) + viewConeMargin;
+
+            boundingCircle = new BoundingCircle(center, radius);
         }
 
         private void InitializeWayPoints(Vector2 patternStartPosition, Vector2[] patternPositions)
@@ -336,37 +491,36 @@ public class EnemyController : MonoBehaviour
 
         private void CalculateDistances()
         {
+            totalDistance -= (wayPoints[0].Next[Direction.ToPrev].Position - wayPoints[0].Position).magnitude;
+
             foreach (WayPoint wayPoint in wayPoints)
             {
                 wayPoint.ToNextDistance[Direction.ToNext] = (wayPoint.Next[Direction.ToNext].Position - wayPoint.Position).magnitude;
                 wayPoint.ToNextDistance[Direction.ToPrev] = (wayPoint.Next[Direction.ToPrev].Position - wayPoint.Position).magnitude;
 
-                totalPatternDistance += wayPoint.ToNextDistance[Direction.ToPrev];
-                wayPoint.DistanceFromStart = totalPatternDistance;
+                totalDistance += wayPoint.ToNextDistance[Direction.ToPrev];
+                wayPoint.DistanceFromStart = totalDistance;
             }
-
-            totalPatternDistance -= wayPoints[0].ToNextDistance[Direction.ToPrev];
-            wayPoints[0].DistanceFromStart = 0;
         }
 
-        private void CalculateGuardStartPosition(Vector2 guardPosition)
+        private void CalculateCharacterStartPosition(Vector2 characterPosition)
         {
-            WayPoint nearestSegementWayPoint = wayPoints.OrderBy(waypoint => (waypoint.Position - guardPosition).sqrMagnitude).First();
+            WayPoint nearestSegementWayPoint = wayPoints.OrderBy(waypoint => (waypoint.Position - characterPosition).sqrMagnitude).First();
             lastWayPoint = nearestSegementWayPoint;
 
-            float guardToNextDistance = (nearestSegementWayPoint.Next[Direction.ToNext].Position - guardPosition).magnitude;
-            float guardToPrevDistance = (nearestSegementWayPoint.Next[Direction.ToPrev].Position - guardPosition).magnitude;
+            float characterToNextDistance = (nearestSegementWayPoint.Next[Direction.ToNext].Position - characterPosition).magnitude;
+            float characterToPrevDistance = (nearestSegementWayPoint.Next[Direction.ToPrev].Position - characterPosition).magnitude;
 
-            float guardToSegmentEndWayPointDistance = guardToNextDistance;
+            float characterToSegmentEndWayPointDistance = characterToNextDistance;
 
-            if (guardToPrevDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToPrev] <
-               guardToNextDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext])
+            if (characterToPrevDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToPrev] <
+               characterToNextDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext])
             {
-                guardToSegmentEndWayPointDistance = guardToPrevDistance;
+                characterToSegmentEndWayPointDistance = characterToPrevDistance;
                 lastWayPoint = lastWayPoint.Next[Direction.ToPrev];
             }
 
-            lerpTime = 1 - (guardToSegmentEndWayPointDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext]);
+            lerpTime = 1 - (characterToSegmentEndWayPointDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext]);
         }
 
     }
