@@ -18,14 +18,14 @@ public class EnemyController : MonoBehaviour
 
     private SpriteRenderer bubble;
     private float alertTime;
-    private float alertTimeOut = 0.5f;
+    private const float alertTimeOut = 0.5f;
 
     private SpriteRenderer guardSpriteRenderer;
     private Animator animator;
 
     private Transform viewCone;
-    private float viewConeAngle = 22.5f;
-    private float viewConeLength = 5;
+    private const float viewConeAngle = 22.5f;
+    private const float viewConeLength = 5;
 
     private float sleepingTime;
     private bool awake;
@@ -60,12 +60,13 @@ public class EnemyController : MonoBehaviour
 
         guardSpriteRenderer.color = Color.white;
 
-        viewCone.localScale = new Vector3((viewConeAngle / 22.5f), viewConeLength * 0.245f, 1);
+        viewCone.localScale = new Vector2((viewConeAngle / 22.5f), viewConeLength * 0.245f);
 
         detectedCharacters = new List<Character>();
         sensedCharacters = new List<Character>();
 
         UpdatePositionAndRotation();
+        UpdateAnimation();
     }
 
     void FixedUpdate()
@@ -98,7 +99,7 @@ public class EnemyController : MonoBehaviour
     {
         float direction = viewCone.eulerAngles.z;
 
-        if (characterDetected)
+        if (characterDetected || sleeping)
         {
             animator.SetBool("Moving", false);
         }
@@ -185,8 +186,6 @@ public class EnemyController : MonoBehaviour
         {
             sleeping = true;
             awake = false;
-
-            UpdateAnimation();
         }
     }
 
@@ -271,7 +270,7 @@ public class EnemyController : MonoBehaviour
         private Direction direction;
 
         private float totalDistance;
-        private float walkingSpeed = 2;
+        private const float walkingSpeed = 2;
 
         private float lerpTime;
 
@@ -280,12 +279,10 @@ public class EnemyController : MonoBehaviour
 
         public void WakeUpPattern(float timeSlept)
         {
-            float distanceTraveled = timeSlept * walkingSpeed + lastWayPoint.ToNextDistance[direction] * lerpTime;
-            distanceTraveled += direction == Direction.ToNext ? lastWayPoint.DistanceFromStart : totalDistance - lastWayPoint.DistanceFromStart;
+            float distanceTraveled = timeSlept * walkingSpeed + lastWayPoint.DistanceToTheFollowingIn[direction] * lerpTime;
+            distanceTraveled += lastWayPoint.DistanceToStartOfThe[direction];
 
-
-            float overflow = (distanceTraveled / totalDistance);
-            if (overflow > 1)
+            if (!isRing && distanceTraveled / totalDistance > 1)
             {
                 direction = (Direction)(((int)direction + 1) % 2);
                 distanceTraveled -= totalDistance;
@@ -293,58 +290,33 @@ public class EnemyController : MonoBehaviour
 
             float progress = distanceTraveled % totalDistance;
 
-            if (!isRing)
+            lastWayPoint = direction == Direction.Next ? wayPoints[0] : wayPoints[wayPoints.Count - 1];
+
+
+            while (lastWayPoint.DistanceToTheFollowingIn[direction] < progress)
             {
-                if (direction == Direction.ToNext)
-                {
-                    lastWayPoint = wayPoints[0];
-                    float nextDistanceToStart = lastWayPoint.Next[direction].DistanceFromStart;
-
-                    while (nextDistanceToStart < progress)
-                    {
-                        lastWayPoint = lastWayPoint.Next[direction];
-                        nextDistanceToStart = lastWayPoint.Next[direction].DistanceFromStart;
-                    }
-
-                    progress -= lastWayPoint.DistanceFromStart;
-
-                    lerpTime = progress / lastWayPoint.ToNextDistance[direction];
-                }
-                else
-                {
-                    lastWayPoint = wayPoints[wayPoints.Count - 1];
-                    float prevDistanceToStart = totalDistance - lastWayPoint.Next[direction].DistanceFromStart;
-
-                    while (prevDistanceToStart < progress)
-                    {
-                        lastWayPoint = lastWayPoint.Next[direction];
-                        prevDistanceToStart = totalDistance - lastWayPoint.Next[direction].DistanceFromStart;
-                    }
-
-                    progress -= totalDistance - lastWayPoint.DistanceFromStart;
-
-                    lerpTime = progress / lastWayPoint.ToNextDistance[direction];
-                }
-
+                progress -= lastWayPoint.DistanceToTheFollowingIn[direction];
+                lastWayPoint = lastWayPoint.TakeTheFollowingIn[direction];
             }
 
+            lerpTime = progress / lastWayPoint.DistanceToTheFollowingIn[direction];
         }
 
         public void UpdatePattern(float deltaTime)
         {
             if (!isStationary)
             {
-                lerpTime += deltaTime * walkingSpeed / lastWayPoint.ToNextDistance[direction];
+                lerpTime += deltaTime * walkingSpeed / lastWayPoint.DistanceToTheFollowingIn[direction];
 
                 if (lerpTime > 1)
                 {
                     lerpTime %= 1;
 
-                    lastWayPoint = lastWayPoint.Next[direction];
+                    lastWayPoint = lastWayPoint.TakeTheFollowingIn[direction];
 
                     if (!isRing)
                     {
-                        if (lastWayPoint.Next[Direction.ToNext] == lastWayPoint.Next[Direction.ToPrev])
+                        if (lastWayPoint.TakeTheFollowingIn[Direction.Next] == lastWayPoint.TakeTheFollowingIn[Direction.Prev])
                             direction = (Direction)(((int)direction + 1) % 2);
                     }
                 }
@@ -354,7 +326,7 @@ public class EnemyController : MonoBehaviour
         public Vector2 GetPosition()
         {
             if (!isStationary)
-                characterPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.Next[direction].Position, lerpTime);
+                characterPosition = Vector2.Lerp(lastWayPoint.Position, lastWayPoint.TakeTheFollowingIn[direction].Position, lerpTime);
             return characterPosition;
         }
 
@@ -362,7 +334,7 @@ public class EnemyController : MonoBehaviour
         {
             if (!isStationary)
             {
-                Vector2 orientation = lastWayPoint.Next[direction].Position - lastWayPoint.Position;
+                Vector2 orientation = lastWayPoint.TakeTheFollowingIn[direction].Position - lastWayPoint.Position;
                 float upAngle = Vector2.Angle(Vector2.up, orientation);
                 upAngle *= Mathf.Sign(-orientation.x);
 
@@ -381,7 +353,7 @@ public class EnemyController : MonoBehaviour
             if (!isStationary)
                 foreach (WayPoint wayPoint in wayPoints)
                 {
-                    Debug.DrawRay(wayPoint.Position, wayPoint.Next[direction].Position - wayPoint.Position, Color.green);
+                    Debug.DrawRay(wayPoint.Position, wayPoint.TakeTheFollowingIn[direction].Position - wayPoint.Position, Color.green);
                 }
         }
 
@@ -469,38 +441,46 @@ public class EnemyController : MonoBehaviour
                 if (i + 1 == wayPoints.Count)
                 {
                     if (isRing)
-                        wayPoints[i].Next.Add(Direction.ToNext, wayPoints[0]);
+                        wayPoints[i].TakeTheFollowingIn.Add(Direction.Next, wayPoints[0]);
                     else
-                        wayPoints[i].Next.Add(Direction.ToNext, wayPoints[i - 1]);
+                        wayPoints[i].TakeTheFollowingIn.Add(Direction.Next, wayPoints[i - 1]);
                 }
                 else
-                    wayPoints[i].Next.Add(Direction.ToNext, wayPoints[i + 1]);
+                    wayPoints[i].TakeTheFollowingIn.Add(Direction.Next, wayPoints[i + 1]);
 
 
                 if (i - 1 < 0)
                 {
                     if (isRing)
-                        wayPoints[i].Next.Add(Direction.ToPrev, wayPoints[wayPoints.Count - 1]);
+                        wayPoints[i].TakeTheFollowingIn.Add(Direction.Prev, wayPoints[wayPoints.Count - 1]);
                     else
-                        wayPoints[i].Next.Add(Direction.ToPrev, wayPoints[i + 1]);
+                        wayPoints[i].TakeTheFollowingIn.Add(Direction.Prev, wayPoints[i + 1]);
                 }
                 else
-                    wayPoints[i].Next.Add(Direction.ToPrev, wayPoints[i - 1]);
+                    wayPoints[i].TakeTheFollowingIn.Add(Direction.Prev, wayPoints[i - 1]);
             }
         }
 
         private void CalculateDistances()
         {
-            totalDistance -= (wayPoints[0].Next[Direction.ToPrev].Position - wayPoints[0].Position).magnitude;
+            float reverseTotalDistance = 0;
 
-            foreach (WayPoint wayPoint in wayPoints)
+            for (int i = 0; i < wayPoints.Count; i++)
             {
-                wayPoint.ToNextDistance[Direction.ToNext] = (wayPoint.Next[Direction.ToNext].Position - wayPoint.Position).magnitude;
-                wayPoint.ToNextDistance[Direction.ToPrev] = (wayPoint.Next[Direction.ToPrev].Position - wayPoint.Position).magnitude;
+                WayPoint wayPoint = wayPoints[i];
+                wayPoint.DistanceToTheFollowingIn[Direction.Next] = (wayPoint.TakeTheFollowingIn[Direction.Next].Position - wayPoint.Position).magnitude;
+                wayPoint.DistanceToTheFollowingIn[Direction.Prev] = (wayPoint.TakeTheFollowingIn[Direction.Prev].Position - wayPoint.Position).magnitude;
 
-                totalDistance += wayPoint.ToNextDistance[Direction.ToPrev];
-                wayPoint.DistanceFromStart = totalDistance;
+                wayPoint.DistanceToStartOfThe[Direction.Next] = totalDistance;
+                totalDistance += wayPoint.DistanceToTheFollowingIn[Direction.Next];
+
+                wayPoint = wayPoints[(wayPoints.Count - 1) - i];
+                wayPoint.DistanceToStartOfThe[Direction.Prev] = reverseTotalDistance;
+                reverseTotalDistance += (wayPoint.TakeTheFollowingIn[Direction.Prev].Position - wayPoint.Position).magnitude;
             }
+
+            if (!isRing)
+                totalDistance -= wayPoints[wayPoints.Count - 1].DistanceToTheFollowingIn[Direction.Next];
         }
 
         private void CalculateCharacterStartPosition(Vector2 characterPosition)
@@ -508,37 +488,36 @@ public class EnemyController : MonoBehaviour
             WayPoint nearestSegementWayPoint = wayPoints.OrderBy(waypoint => (waypoint.Position - characterPosition).sqrMagnitude).First();
             lastWayPoint = nearestSegementWayPoint;
 
-            float characterToNextDistance = (nearestSegementWayPoint.Next[Direction.ToNext].Position - characterPosition).magnitude;
-            float characterToPrevDistance = (nearestSegementWayPoint.Next[Direction.ToPrev].Position - characterPosition).magnitude;
+            float characterToNextDistance = (nearestSegementWayPoint.TakeTheFollowingIn[Direction.Next].Position - characterPosition).magnitude;
+            float characterToPrevDistance = (nearestSegementWayPoint.TakeTheFollowingIn[Direction.Prev].Position - characterPosition).magnitude;
 
             float characterToSegmentEndWayPointDistance = characterToNextDistance;
 
-            if (characterToPrevDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToPrev] <
-               characterToNextDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext])
+            if (characterToPrevDistance / nearestSegementWayPoint.DistanceToTheFollowingIn[Direction.Prev] <
+               characterToNextDistance / nearestSegementWayPoint.DistanceToTheFollowingIn[Direction.Next])
             {
                 characterToSegmentEndWayPointDistance = characterToPrevDistance;
-                lastWayPoint = lastWayPoint.Next[Direction.ToPrev];
+                lastWayPoint = lastWayPoint.TakeTheFollowingIn[Direction.Prev];
             }
 
-            lerpTime = 1 - (characterToSegmentEndWayPointDistance / nearestSegementWayPoint.ToNextDistance[Direction.ToNext]);
+            lerpTime = 1 - (characterToSegmentEndWayPointDistance / nearestSegementWayPoint.DistanceToTheFollowingIn[Direction.Next]);
         }
 
     }
 
     private class WayPoint
     {
-        public Dictionary<Direction, WayPoint> Next = new Dictionary<Direction, WayPoint>(2);
-        public Dictionary<Direction, float> ToNextDistance = new Dictionary<Direction, float>(2);
+        public readonly Dictionary<Direction, WayPoint> TakeTheFollowingIn = new Dictionary<Direction, WayPoint>(2);
+        public readonly Dictionary<Direction, float> DistanceToTheFollowingIn = new Dictionary<Direction, float>(2);
+        public readonly Dictionary<Direction, float> DistanceToStartOfThe = new Dictionary<Direction, float>(2);
 
         public Vector2 Position;
-
-        public float DistanceFromStart;
     }
 
     private enum Direction
     {
-        ToNext,
-        ToPrev
+        Next,
+        Prev
     }
 }
 
